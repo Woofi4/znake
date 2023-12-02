@@ -18,6 +18,8 @@ namespace game {
 		extern bool fullscreen;
 		extern unsigned int width;
 		extern unsigned int height;
+		extern float wscale;
+		extern float hscale;
 	};
 
 	namespace PLAYER {
