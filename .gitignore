@@ -1,0 +1,25 @@
+# Ignore all files
+*
+!*/
+
+# gitignore
+!.gitignore
+
+# CMakeLists
+!CMakeLists.txt
+
+# README.md
+!README.md
+
+# Docs
+!docs/README.md
+
+# Resources
+!data/**
+
+# External libraries
+!external/**
+
+# Source code and headres
+!src/*.cpp
+!include/*.hpp
