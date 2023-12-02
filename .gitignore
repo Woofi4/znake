@@ -1,6 +1,7 @@
 # Ignore all files
 *
 !*/
+!*/.gitkeep
 
 # gitignore
 !.gitignore
