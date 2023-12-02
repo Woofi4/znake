@@ -13,11 +13,15 @@ namespace game::PLAYER {
 
 
 bool game::load() {
-	game::WINDOW::name = "znake";
-	game::WINDOW::width = 1024;
-	game::WINDOW::height = 708;
+	std::ifstream json("data/config.json");
+	if (!json) { return false; }
+	nlohmann::json config = nlohmann::json::parse(json);
+	json.close();
 
-	game::PLAYER::name = "Snake";
+	game::WINDOW::name = config["window"]["name"];
+	game::WINDOW::width = config["window"]["width"];
+	game::WINDOW::height = config["window"]["height"];
+	game::PLAYER::name = config["player"]["name"];
 
 	return true;
 }

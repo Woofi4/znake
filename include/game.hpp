@@ -1,8 +1,10 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include "../external/nlohmann/json.hpp"
 #include "assets.hpp"
 
+#include <fstream>
 #include <string>
 
 

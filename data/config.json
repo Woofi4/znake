@@ -1,0 +1,10 @@
+{
+	"window": {
+		"name": "znake",
+		"width": 1024,
+		"height": 708
+	},
+	"player": {
+		"name": "Snake"
+	}
+}
