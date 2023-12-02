@@ -1,15 +1,15 @@
 #include "../include/assets.hpp"
 
 
-namespace assets::Font {
+namespace assets::font {
 
 };
 
-namespace assets::Image {
+namespace assets::texture {
 
 };
 
-namespace uassets::Sound {
+namespace assets::sound {
 
 };
 

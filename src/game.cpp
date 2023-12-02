@@ -1,7 +1,7 @@
 #include "../include/game.hpp"
 
 
-namespace game::WINDOW {
+namespace game::window {
 	std::string title;
 	bool fullscreen;
 	unsigned int width;
@@ -10,7 +10,7 @@ namespace game::WINDOW {
 	float hscale;
 }
 
-namespace game::PLAYER {
+namespace game::player {
 	std::string name;
 }
 
@@ -18,19 +18,19 @@ namespace game::PLAYER {
 bool game::load() {
 	std::ifstream json("data/config.json");
 	if (!json) { return false; }
-	
+
 	nlohmann::json config = nlohmann::json::parse(json);
 	json.close();
 
-	game::WINDOW::title = config["window"]["name"];
+	game::window::title = config["window"]["title"];
 
-	game::WINDOW::fullscreen = config["window"]["fullscreen"];
-	game::WINDOW::width = config["window"]["width"];
-	game::WINDOW::height = config["window"]["height"];
-	game::WINDOW::wscale = game::WINDOW::width / (float) config["window"]["default_width"];
-	game::WINDOW::hscale = game::WINDOW::height / (float) config["window"]["default_height"];
+	game::window::fullscreen = config["window"]["fullscreen"];
+	game::window::width = config["window"]["width"];
+	game::window::height = config["window"]["height"];
+	game::window::wscale = game::window::width / (float) config["window"]["default_width"];
+	game::window::hscale = game::window::height / (float) config["window"]["default_height"];
 
-	game::PLAYER::name = config["player"]["name"];
+	game::player::name = config["player"]["name"];
 
 	return true;
 }

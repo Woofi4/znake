@@ -9,11 +9,11 @@
 
 
 namespace game {
-	namespace PROPERTIES {
+	namespace properties {
 
 	};
 
-	namespace WINDOW {
+	namespace window {
 		extern std::string title;
 		extern bool fullscreen;
 		extern unsigned int width;
@@ -22,7 +22,7 @@ namespace game {
 		extern float hscale;
 	};
 
-	namespace PLAYER {
+	namespace player {
 		extern std::string name;
 	};
 

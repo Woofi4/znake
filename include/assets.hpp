@@ -5,15 +5,15 @@
 
 
 namespace assets {
-	namespace Font {
+	namespace font {
 
 	};
 
-	namespace Image {
+	namespace texture {
 
 	};
 
-	namespace Sound {
+	namespace sound {
 
 	};
 	
