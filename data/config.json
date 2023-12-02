@@ -2,8 +2,8 @@
 	"window": {
 		"name": "znake",
 		"fullscreen": false,
-		"width": 1024,
-		"height": 768
+		"width": 1200,
+		"height": 800
 	},
 	"player": {
 		"name": "Snake"

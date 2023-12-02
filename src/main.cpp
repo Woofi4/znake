@@ -7,7 +7,7 @@ int main() {
 	sf::RenderWindow window(
 		sf::VideoMode(game::WINDOW::width, game::WINDOW::height),
 		game::WINDOW::title,
-		game::WINDOW::fullscreen ? sf::Style::Fullscreen : sf::Style::Default
+		(game::WINDOW::fullscreen ? sf::Style::Fullscreen : sf::Style::Default) & sf::Style::Close
 	);
 	while (window.isOpen()) {
 		sf::Event event;
