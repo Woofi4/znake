@@ -2,7 +2,8 @@
 
 
 namespace game::WINDOW {
-	std::string name;
+	std::string title;
+	bool fullscreen;
 	unsigned int width;
 	unsigned int height;
 }
@@ -18,8 +19,9 @@ bool game::load() {
 	nlohmann::json config = nlohmann::json::parse(json);
 	json.close();
 
-	game::WINDOW::name = config["window"]["name"];
+	game::WINDOW::title = config["window"]["name"];
 	game::WINDOW::width = config["window"]["width"];
+	game::WINDOW::fullscreen = config["window"]["fullscreen"];
 	game::WINDOW::height = config["window"]["height"];
 	game::PLAYER::name = config["player"]["name"];
 

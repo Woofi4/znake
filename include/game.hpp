@@ -14,7 +14,8 @@ namespace game {
 	};
 
 	namespace WINDOW {
-		extern std::string name;
+		extern std::string title;
+		extern bool fullscreen;
 		extern unsigned int width;
 		extern unsigned int height;
 	};

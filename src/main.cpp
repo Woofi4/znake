@@ -4,7 +4,11 @@
 int main() {
 	if (!(assets::load() && game::load())) { return -1; }
 
-	sf::RenderWindow window(sf::VideoMode(game::WINDOW::width, game::WINDOW::height), game::WINDOW::name);
+	sf::RenderWindow window(
+		sf::VideoMode(game::WINDOW::width, game::WINDOW::height),
+		game::WINDOW::title,
+		game::WINDOW::fullscreen ? sf::Style::Fullscreen : sf::Style::Default
+	);
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
