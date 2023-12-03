@@ -16,6 +16,7 @@ public:
 	bool check(const sf::Vector2i&);
 	void update(bool);
 	const sf::Sprite& getSprite() const;
+	bool getState() const;
 };
 
 #endif
