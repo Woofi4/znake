@@ -10,7 +10,9 @@ namespace assets {
 	};
 
 	namespace texture {
-
+		extern sf::Texture mainMenuBackground;
+		extern sf::Texture button;
+		extern sf::Texture selectedButton;
 	};
 
 	namespace sound {

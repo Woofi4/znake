@@ -28,6 +28,7 @@ namespace game {
 		KEY_A = 0,
 		KEY_D = 3,
 		ESCAPE = 36,
+		ENTER = 58,
 		LEFT_ARROW = 71,
 		RIGHT_ARROW = 72
 	};
