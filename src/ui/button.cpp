@@ -23,3 +23,5 @@ void button::update(bool state) {
 }
 
 const sf::Sprite& button::getSprite() const { return _scaled.getSprite(); }
+
+bool button::getState() const { return _state; }
