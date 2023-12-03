@@ -9,7 +9,7 @@ int main() {
 		game::window::title,
 		(game::window::fullscreen ? sf::Style::Fullscreen : sf::Style::Default) & sf::Style::Close
 	);
-	game::drawMenu(window);
+	game::drawGame(window);
 
 	return 0;
 }

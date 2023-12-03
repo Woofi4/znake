@@ -37,11 +37,7 @@ bool game::load() {
 	return true;
 }
 
-void game::drawGame(sf::RenderWindow& window) { };
-
-void game::drawStartMenu(sf::RenderWindow& window) { };
-
-void game::drawMenu(sf::RenderWindow& window) {
+void game::drawGame(sf::RenderWindow& window) {
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -52,5 +48,9 @@ void game::drawMenu(sf::RenderWindow& window) {
 		window.display();
 	}
 };
+
+void game::drawStartMenu(sf::RenderWindow& window) { };
+
+void game::drawMenu(sf::RenderWindow& window) { };
 
 void game::drawSettings(sf::RenderWindow& window) { };
