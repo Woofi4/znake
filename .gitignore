@@ -24,3 +24,5 @@
 # Source code and headres
 !src/*.cpp
 !include/*.hpp
+!src/ui/*.cpp
+!include/ui/*.hpp
