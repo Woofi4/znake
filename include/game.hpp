@@ -16,10 +16,8 @@ namespace game {
 	namespace window {
 		extern std::string title;
 		extern bool fullscreen;
-		extern unsigned int width;
-		extern unsigned int height;
-		extern float wscale;
-		extern float hscale;
+		extern sf::Vector2f size;
+		extern sf::Vector2f factors;
 	};
 
 	namespace player {

@@ -4,10 +4,8 @@
 namespace game::window {
 	std::string title;
 	bool fullscreen;
-	unsigned int width;
-	unsigned int height;
-	float wscale;
-	float hscale;
+	sf::Vector2f size;
+	sf::Vector2f factors;
 }
 
 namespace game::player {
@@ -25,10 +23,14 @@ bool game::load() {
 	game::window::title = config["window"]["title"];
 
 	game::window::fullscreen = config["window"]["fullscreen"];
-	game::window::width = config["window"]["width"];
-	game::window::height = config["window"]["height"];
-	game::window::wscale = game::window::width / (float) config["window"]["default_width"];
-	game::window::hscale = game::window::height / (float) config["window"]["default_height"];
+	game::window::factors = { 
+		config["window"]["width"],
+		config["window"]["height"]
+	};
+	game::window::factors = {
+		game::window::size.x / (float) config["window"]["default_width"],
+		game::window::size.y / (float) config["window"]["default_height"]
+	};
 
 	game::player::name = config["player"]["name"];
 
@@ -39,6 +41,16 @@ void game::drawGame(sf::RenderWindow& window) { };
 
 void game::drawStartMenu(sf::RenderWindow& window) { };
 
-void game::drawMenu(sf::RenderWindow& window) { };
+void game::drawMenu(sf::RenderWindow& window) {
+	while (window.isOpen()) {
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) { window.close(); }
+		}
+
+		window.clear();
+		window.display();
+	}
+};
 
 void game::drawSettings(sf::RenderWindow& window) { };

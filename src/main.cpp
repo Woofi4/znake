@@ -5,20 +5,11 @@ int main() {
 	if (!(assets::load() && game::load())) { return -1; }
 
 	sf::RenderWindow window(
-		sf::VideoMode(game::window::width, game::window::height),
+		sf::VideoMode(game::window::size.x, game::window::size.y),
 		game::window::title,
 		(game::window::fullscreen ? sf::Style::Fullscreen : sf::Style::Default) & sf::Style::Close
 	);
-	while (window.isOpen()) {
-		sf::Event event;
-		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed) { window.close(); }
-			else if (event.type == sf::Event::KeyPressed) { }
-		}
-
-		window.clear();
-		window.display();
-	}
+	game::drawMenu(window);
 
 	return 0;
 }
