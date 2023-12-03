@@ -23,7 +23,7 @@ bool game::load() {
 	game::window::title = config["window"]["title"];
 
 	game::window::fullscreen = config["window"]["fullscreen"];
-	game::window::factors = { 
+	game::window::size = { 
 		config["window"]["width"],
 		config["window"]["height"]
 	};
