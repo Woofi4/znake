@@ -54,16 +54,16 @@ void game::drawMenu(sf::RenderWindow& window) {
 			button (scaled(assets::texture::button, {mainMenuPos.x, mainMenuPos.y+200}, game::window::factors), assets::texture::selectedButton)
 	};
 
-	int focusID = 0; //selected button ID(with arrows)
+	int focusID = 0;
 
-	int mouseActive = true;
+	int firstPress = true;
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) { window.close(); }
 			else if (event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonPressed) {
 				window.setMouseCursorVisible(true);
-
+				firstPress = true;
 				for(int i=0;i<mainMenuButtons.size();++i){
 					if (mainMenuButtons[i].check(sf::Mouse::getPosition(window)) && event.type == sf::Event::MouseButtonPressed) {
 						focusID = i;
@@ -73,6 +73,14 @@ void game::drawMenu(sf::RenderWindow& window) {
 			}
 			else if (event.type == sf::Event::KeyPressed) {
 				window.setMouseCursorVisible(false);
+				for(int i=0;i<mainMenuButtons.size();++i){
+					mainMenuButtons[i].update(i == focusID);
+				}
+				if(firstPress == true){
+					firstPress = false;
+					continue;
+				}
+
 				if (event.key.code == game::CONTROL::LEFT_ARROW) {
 					focusID = (++focusID) % mainMenuButtons.size();
 				}
