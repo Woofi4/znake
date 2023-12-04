@@ -5,6 +5,7 @@
 
 
 class button {
+protected:
 	scaled _scaled;
 	sf::Texture _active;
 	sf::Texture _inactive;
