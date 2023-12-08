@@ -1,0 +1,11 @@
+{
+	"window": {
+		"title": "znake",
+		"fullscreen": false,
+		"size": [1024, 768],
+		"default_size": [1200, 800]
+	},
+	"player": {
+		"name": "Snake"
+	}
+}
