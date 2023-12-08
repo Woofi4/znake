@@ -2,11 +2,8 @@
 	"window": {
 		"title": "znake",
 		"fullscreen": false,
-		"width": 1024,
-		"height": 768,
-		
-		"default_width": 1200,
-		"default_height": 800
+		"size": [1024, 768],
+		"default_size": [1200, 800]
 	},
 	"player": {
 		"name": "Snake"
