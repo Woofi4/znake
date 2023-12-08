@@ -4,8 +4,8 @@
 namespace game::window {
 	std::string title;
 	bool fullscreen;
-	sf::Vector2f size;
-	sf::Vector2f factors;
+	std::pair<unsigned, unsigned> size;
+	std::pair<float, float> factors;
 }
 
 namespace game::player {
@@ -16,32 +16,30 @@ namespace game::player {
 bool game::load() {
 	std::ifstream json("data/config.json");
 	if (!json) { return false; }
-
 	nlohmann::json config = nlohmann::json::parse(json);
 	json.close();
 
-	game::window::title = config["window"]["title"];
-
-	game::window::fullscreen = config["window"]["fullscreen"];
-	game::window::size = { 
-		config["window"]["width"],
-		config["window"]["height"]
-	};
-	game::window::factors = {
-		game::window::size.x / (float) config["window"]["default_width"],
-		game::window::size.y / (float) config["window"]["default_height"]
+	window::title = config["window"]["title"];
+	window::fullscreen = config["window"]["fullscreen"];
+	window::size = config["window"]["size"];
+	window::factors = {
+		window::size.first / (float) config["window"]["default_size"][0],
+		window::size.second / (float) config["window"]["default_size"][1]
 	};
 
-	game::player::name = config["player"]["name"];
+	player::name = config["player"]["name"];
 
 	return true;
 }
 
+#include <iostream>
 void game::drawGame(sf::RenderWindow& window) {
-	std::string direction = "EAST";
-	snake snake(drawable_block(100, 100, game::system::blockSize), system::direction.at(direction));
+	drawable_gamemap map(assets::map::box, window::size);
+	drawable_snake& snake = map.getSnake();
 
 	unsigned tick = 0;
+	std::string direction = "EAST";
+	bool isAlive = true;
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -60,18 +58,26 @@ void game::drawGame(sf::RenderWindow& window) {
 					direction = "EAST";
 				}
 
-				snake.setDirection(game::system::direction.at(direction));
+				snake.setDirection(snake::directions[direction]);
+
+				if (!isAlive) { }
 			}
 		}
 
-		window.clear();
-		for (const drawable_block& block : snake.getSnake()) { window.draw(block.getShape());}
-		window.display();
+		if (isAlive) {
+			window.clear();
+			window.draw(map.getMapShape());
+			for (const drawable_block& block : map.getWallShapes()) { window.draw(block.getShape()); }
+			for (const drawable_block& block : snake.getSnake()) { window.draw(block.getShape()); }
+			window.display();
 
-		if (tick % (game::system::maxSpeed - game::system::speed) == 0) { snake.move(); }
-		
-		++tick;
-		if (tick == game::window::framerate) { tick = 0; }
+			if ((tick % (snake::maxSpeed - properties::speed) == 0)) { snake.move(); }
+			for (const drawable_block& block : map.getWallShapes()) { if (snake.hit(block)) { isAlive = false; }}
+			for (const drawable_block& block : snake.getSnake()) { if (!(snake.getHeadX() == block.getX() && snake.getHeadY() == block.getY()) && snake.hit(block)) { isAlive = false; } }
+
+			if (++tick == window::framerate) { tick = 0; }
+		}
+		else { }
 	}
 };
 

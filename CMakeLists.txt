@@ -11,5 +11,5 @@ ELSE()
 ENDIF()
 
 
-add_executable(snake src/obj/block.cpp src/obj/drawable_block.cpp src/obj/snake.cpp src/assets.cpp src/game.cpp src/main.cpp)
+add_executable(snake src/obj/block.cpp src/obj/drawable_block.cpp src/obj/gamemap.cpp src/obj/drawable_gamemap.cpp src/obj/drawable_snake.cpp src/assets.cpp src/game.cpp src/main.cpp)
 target_link_libraries(snake sfml-graphics sfml-window sfml-system)
