@@ -13,6 +13,7 @@ public:
 	drawable_block(float x, float y, float size, const sf::Texture& texture = {});
 	void setTexture(const sf::Texture& texture);
 	const sf::RectangleShape& getShape() const;
+	const sf::Texture& getTexture() const;
 };
 
 #endif
