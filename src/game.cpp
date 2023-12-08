@@ -60,7 +60,7 @@ void game::drawGame(sf::RenderWindow& window) {
 
 				snake.setDirection(snake::directions[direction]);
 
-				if (!isAlive) { }
+				if (!isAlive) { return; }
 			}
 		}
 
@@ -69,20 +69,52 @@ void game::drawGame(sf::RenderWindow& window) {
 			window.draw(map.getMapShape());
 			for (const drawable_block& block : map.getWallShapes()) { window.draw(block.getShape()); }
 			for (const drawable_block& block : snake.getSnake()) { window.draw(block.getShape()); }
-			window.display();
 
 			if ((tick % (snake::maxSpeed - properties::speed) == 0)) { snake.move(); }
 			for (const drawable_block& block : map.getWallShapes()) { if (snake.hit(block)) { isAlive = false; }}
+
+			// TODO: fix
 			for (const drawable_block& block : snake.getSnake()) { if (!(snake.getHeadX() == block.getX() && snake.getHeadY() == block.getY()) && snake.hit(block)) { isAlive = false; } }
 
 			if (++tick == window::framerate) { tick = 0; }
 		}
 		else { }
+
+		window.display();
 	}
 };
 
 void game::drawStartMenu(sf::RenderWindow& window) { };
 
-void game::drawMenu(sf::RenderWindow& window) { };
+void game::drawMenu(sf::RenderWindow& window) {
+	scaled background(assets::texture::background, {0, 0}, {game::window::factors.first, game::window::factors.second});
+	button start_button(scaled(assets::texture::start_button, {150, 200}, {game::window::factors.first, game::window::factors.second}), assets::texture::start_button_selected);
+
+	while (window.isOpen()) {
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) { window.close(); }
+			else if (event.type == sf::Event::MouseMoved) {
+				start_button.check(sf::Mouse::getPosition(window));
+			}
+			else if (event.type == sf::Event::KeyPressed) {
+				if (event.key.code == sf::Keyboard::S) {
+					start_button.update(true);
+				}
+				else if (event.key.code == sf::Keyboard::W) {
+					start_button.update(false);
+				}
+			}
+			else if (start_button.getState() && (event.type == sf::Event::MouseButtonPressed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter))) {
+				drawGame(window);
+			}
+		}
+
+		window.clear();
+		window.draw(background.getSprite());
+		window.draw(start_button.getSprite());
+		window.display();
+	}
+};
 
 void game::drawSettings(sf::RenderWindow& window) { };

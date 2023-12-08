@@ -11,7 +11,7 @@ int main() {
 	);
 	window.setFramerateLimit(game::window::framerate);
 
-	game::drawGame(window);
+	game::drawMenu(window);
 
 	return 0;
 }

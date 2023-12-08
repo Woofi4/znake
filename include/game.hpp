@@ -3,6 +3,7 @@
 
 #include "../external/nlohmann/json.hpp"
 #include "obj/drawable_gamemap.hpp"
+#include "../include/ui/button.hpp"
 #include "assets.hpp"
 
 #include <fstream>

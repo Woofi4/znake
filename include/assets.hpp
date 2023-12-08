@@ -12,6 +12,9 @@ namespace assets {
 	};
 
 	namespace texture {
+		extern sf::Texture background;
+		extern sf::Texture start_button;
+		extern sf::Texture start_button_selected;
 		extern sf::Texture snake_skin;
 		extern sf::Texture wall;
 	};
