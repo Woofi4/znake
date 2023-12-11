@@ -22,7 +22,7 @@ class drawable_snake {
 public:
 	drawable_snake(const drawable_block& origin, const std::pair<float, float>& direction = snake::directions["EAST"], unsigned size = snake::defaultSize);
 	void add();
-	void move();
+	void move(std::string direction);
 	float getHeadX() const;
 	float getHeadY() const;
 	const std::vector<drawable_block>& getSnake() const;

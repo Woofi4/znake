@@ -2,7 +2,7 @@
 
 
 namespace assets::font {
-
+	sf::Font arcade;
 };
 
 namespace assets::texture {
@@ -23,6 +23,7 @@ namespace assets::map {
 
 
 bool assets::load() {
+	if (!font::arcade.loadFromFile("data/fonts/arcadeclassic.ttf")) { return false; }
 	if (!texture::background.loadFromFile("data/textures/background.png")) { return false; }
 	if (!texture::start_button.loadFromFile("data/textures/start_button.png")) { return false; }
 	if (!texture::start_button_selected.loadFromFile("data/textures/start_button_selected.png")) { return false; }

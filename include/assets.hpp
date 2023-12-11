@@ -8,7 +8,7 @@
 
 namespace assets {
 	namespace font {
-
+		extern sf::Font arcade;
 	};
 
 	namespace texture {

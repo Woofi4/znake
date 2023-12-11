@@ -34,6 +34,9 @@ bool game::load() {
 
 #include <iostream>
 void game::drawGame(sf::RenderWindow& window) {
+	sf::Text gameover("Game over", assets::font::arcade, 80);
+	gameover.setPosition((window::size.first / 2) - 180, 200);
+
 	drawable_gamemap map(assets::map::box, window::size);
 	drawable_snake& snake = map.getSnake();
 
@@ -45,20 +48,18 @@ void game::drawGame(sf::RenderWindow& window) {
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) { window.close(); }
 			else if (event.type == sf::Event::KeyPressed) {
-				if (event.key.code == sf::Keyboard::W && direction != "SOUTH") {
+				if (event.key.code == sf::Keyboard::W) {
 					direction = "NORTH";
 				}
-				else if (event.key.code == sf::Keyboard::A && direction != "EAST") {
+				else if (event.key.code == sf::Keyboard::A) {
 					direction = "WEST";
 				}
-				else if (event.key.code == sf::Keyboard::S && direction != "NORTH") {
+				else if (event.key.code == sf::Keyboard::S) {
 					direction = "SOUTH";
 				}
-				else if (event.key.code == sf::Keyboard::D && direction != "WEST") {
+				else if (event.key.code == sf::Keyboard::D) {
 					direction = "EAST";
 				}
-
-				snake.setDirection(snake::directions[direction]);
 
 				if (!isAlive) { return; }
 			}
@@ -67,18 +68,19 @@ void game::drawGame(sf::RenderWindow& window) {
 		if (isAlive) {
 			window.clear();
 			window.draw(map.getMapShape());
+			window.draw(map.getCommonShape());
 			for (const drawable_block& block : map.getWallShapes()) { window.draw(block.getShape()); }
 			for (const drawable_block& block : snake.getSnake()) { window.draw(block.getShape()); }
 
-			if ((tick % (snake::maxSpeed - properties::speed) == 0)) { snake.move(); }
+			if ((tick % (snake::maxSpeed - properties::speed) == 0)) { snake.move(direction); map.update(); }
 			for (const drawable_block& block : map.getWallShapes()) { if (snake.hit(block)) { isAlive = false; }}
-
-			// TODO: fix
-			for (const drawable_block& block : snake.getSnake()) { if (!(snake.getHeadX() == block.getX() && snake.getHeadY() == block.getY()) && snake.hit(block)) { isAlive = false; } }
-
+			std::vector<drawable_block> snake_blocks = map.getSnake().getSnake();
+			for (unsigned i = 1; i < snake_blocks.size(); ++i) { if (snake.hit(snake_blocks[i])) { isAlive = false; } }
 			if (++tick == window::framerate) { tick = 0; }
 		}
-		else { }
+		else {
+			window.draw(gameover);
+		}
 
 		window.display();
 	}
