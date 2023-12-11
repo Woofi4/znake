@@ -26,3 +26,5 @@
 !include/*.hpp
 !src/obj/*.cpp
 !include/obj/*.hpp
+!src/ui/*.cpp
+!include/ui/*.hpp
