@@ -35,19 +35,20 @@ bool game::load() {
 #include <iostream>
 void game::drawGame(sf::RenderWindow& window) {
 	sf::Text gameover("Game over", assets::font::arcade, 80);
-	gameover.setPosition((window::size.first / 2) - 180, 200);
 	sf::Text pause("Paused", assets::font::arcade, 80);
-	pause.setPosition((window::size.first / 2) - 140, 200);
+	sf::Text score("0", assets::font::arcade, 60);
 
 	drawable_gamemap map(assets::map::box, window::size);
 	drawable_snake& snake = map.getSnake();
-
-	sf::Text score("0", assets::font::arcade, 60);
+	
+	gameover.setPosition((window::size.first / 2) - 180, 200);
+	pause.setPosition((window::size.first / 2) - 140, 200);
 	score.setPosition({map.getMapShape().getPosition().x, map.getMapShape().getPosition().y - 70});
 
 
 	unsigned tick = 0;
-	std::string direction = "EAST";
+	std::string direction1p = "EAST";
+	std::string direction2p = "EAST";
 	bool isAlive = true;
 	bool isPause = false;
 	while (window.isOpen()) {
@@ -56,17 +57,31 @@ void game::drawGame(sf::RenderWindow& window) {
 			if (event.type == sf::Event::Closed) { window.close(); }
 			else if (event.type == sf::Event::KeyPressed) {
 				if (event.key.code == sf::Keyboard::W) {
-					direction = "NORTH";
+					direction1p = "NORTH";
 				}
 				else if (event.key.code == sf::Keyboard::A) {
-					direction = "WEST";
+					direction1p = "WEST";
 				}
 				else if (event.key.code == sf::Keyboard::S) {
-					direction = "SOUTH";
+					direction1p = "SOUTH";
 				}
 				else if (event.key.code == sf::Keyboard::D) {
-					direction = "EAST";
+					direction1p = "EAST";
 				}
+
+				if (event.key.code == sf::Keyboard::Up) {
+					direction2p = "NORTH";
+				}
+				else if (event.key.code == sf::Keyboard::Left) {
+					direction2p = "WEST";
+				}
+				else if (event.key.code == sf::Keyboard::Down) {
+					direction2p = "SOUTH";
+				}
+				else if (event.key.code == sf::Keyboard::Right) {
+					direction2p = "EAST";
+				}
+
 				else if (event.key.code == sf::Keyboard::Escape) {
 					isPause = !isPause;
 				}
@@ -88,7 +103,7 @@ void game::drawGame(sf::RenderWindow& window) {
 			for (const drawable_block& block : map.getWallShapes()) { window.draw(block.getShape()); }
 			for (const drawable_block& block : snake.getSnake()) { window.draw(block.getShape()); }
 
-			if ((tick % (snake::maxSpeed - properties::speed) == 0)) { snake.move(direction); map.update(); score.setString(std::to_string(map.getScore())); }
+			if ((tick % (snake::maxSpeed - properties::speed) == 0)) { snake.move(game::properties::reverseControl ? direction2p : direction1p); map.update(); score.setString(std::to_string(map.getScore())); }
 			for (const drawable_block& block : map.getWallShapes()) { if (snake.hit(block)) { isAlive = false; }}
 			std::vector<drawable_block> snake_blocks = map.getSnake().getSnake();
 			for (unsigned i = 1; i < snake_blocks.size(); ++i) { if (snake.hit(snake_blocks[i])) { isAlive = false; } }

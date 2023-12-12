@@ -13,6 +13,7 @@
 namespace game {
 	namespace properties {
 		const unsigned speed = 0;
+		const bool reverseControl = true;
 	};
 
 	namespace window {
