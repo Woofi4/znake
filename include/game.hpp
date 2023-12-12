@@ -13,7 +13,9 @@
 namespace game {
 	namespace properties {
 		const unsigned speed = 0;
-		const bool reverseControl = true;
+		const bool reverseControl = false;
+		const bool has2p = false;
+		const bool hasBot = false;
 	};
 
 	namespace window {
@@ -22,7 +24,7 @@ namespace game {
 		extern std::pair<unsigned, unsigned> size;
 		extern std::pair<float, float> factors;
 
-		const unsigned framerate = 80;
+		const unsigned framerate = 30;
 		const float blockSize = 32;
 	};
 

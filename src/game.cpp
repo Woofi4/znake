@@ -36,14 +36,17 @@ bool game::load() {
 void game::drawGame(sf::RenderWindow& window) {
 	sf::Text gameover("Game over", assets::font::arcade, 80);
 	sf::Text pause("Paused", assets::font::arcade, 80);
-	sf::Text score("0", assets::font::arcade, 60);
+	sf::Text score1p("0", assets::font::arcade, 60);
+	sf::Text score2p("0", assets::font::arcade, 60);
 
-	drawable_gamemap map(assets::map::box, window::size);
+	drawable_gamemap map(assets::map::box, window::size, game::properties::has2p, game::properties::hasBot);
 	drawable_snake& snake = map.getSnake();
+	drawable_snake& bot = map.getBot();
 	
 	gameover.setPosition((window::size.first / 2) - 180, 200);
 	pause.setPosition((window::size.first / 2) - 140, 200);
-	score.setPosition({map.getMapShape().getPosition().x, map.getMapShape().getPosition().y - 70});
+	score1p.setPosition({map.getMapShape().getPosition().x, map.getMapShape().getPosition().y - 70});
+	score2p.setPosition({map.getMapShape().getPosition().x + map.getMapShape().getSize().x - 60, map.getMapShape().getPosition().y - 70});
 
 
 	unsigned tick = 0;
@@ -94,7 +97,10 @@ void game::drawGame(sf::RenderWindow& window) {
 		if (isAlive && !isPause) {
 			window.clear();
 			window.draw(map.getMapShape());
-			window.draw(score);
+			window.draw(score1p);
+			if (game::properties::has2p) {
+				window.draw(score2p);
+			}
 			window.draw(map.getCommonShape());
 			if (map.hasBooster()) {
 				window.draw(map.getBoosterShape());
@@ -102,11 +108,30 @@ void game::drawGame(sf::RenderWindow& window) {
 
 			for (const drawable_block& block : map.getWallShapes()) { window.draw(block.getShape()); }
 			for (const drawable_block& block : snake.getSnake()) { window.draw(block.getShape()); }
+			if (game::properties::has2p) {
+				for (const drawable_block& block : bot.getSnake()) { window.draw(block.getShape()); }
+			}
 
-			if ((tick % (snake::maxSpeed - properties::speed) == 0)) { snake.move(game::properties::reverseControl ? direction2p : direction1p); map.update(); score.setString(std::to_string(map.getScore())); }
+			if ((tick % (snake::maxSpeed - properties::speed) == 0)) {
+				snake.move(game::properties::reverseControl ? direction2p : direction1p);
+				if (game::properties::has2p && !game::properties::hasBot) { bot.move(game::properties::reverseControl ? direction1p : direction2p); };
+				map.update();
+				score1p.setString(std::to_string(map.getScore1p()));
+				score2p.setString(std::to_string(map.getScore2p()));
+			}
+
 			for (const drawable_block& block : map.getWallShapes()) { if (snake.hit(block)) { isAlive = false; }}
-			std::vector<drawable_block> snake_blocks = map.getSnake().getSnake();
+			for (const drawable_block& block : bot.getSnake()) { if (snake.hit(block)) { isAlive = false; }}
+			std::vector<drawable_block> snake_blocks = snake.getSnake();
 			for (unsigned i = 1; i < snake_blocks.size(); ++i) { if (snake.hit(snake_blocks[i])) { isAlive = false; } }
+			
+			if (game::properties::has2p) {
+				for (const drawable_block& block : map.getWallShapes()) { if (bot.hit(block)) { isAlive = false; }}
+				for (const drawable_block& block : snake.getSnake()) { if (bot.hit(block)) { isAlive = false; }}
+				std::vector<drawable_block> bot_blocks = bot.getSnake();
+				for (unsigned i = 1; i < bot_blocks.size(); ++i) { if (bot.hit(bot_blocks[i])) { isAlive = false; } }
+			}
+
 			if (++tick == window::framerate) { tick = 0; }
 		}
 		else if (isPause) {

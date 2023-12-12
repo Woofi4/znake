@@ -9,6 +9,7 @@
 		]
 	},
 	"snake": {
-		"origin": [1, 1]
+		"origin1p": [1, 1],
+		"origin2p": [1, 18]
 	}
 }
