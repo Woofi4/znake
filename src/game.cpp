@@ -36,13 +36,20 @@ bool game::load() {
 void game::drawGame(sf::RenderWindow& window) {
 	sf::Text gameover("Game over", assets::font::arcade, 80);
 	gameover.setPosition((window::size.first / 2) - 180, 200);
+	sf::Text pause("Paused", assets::font::arcade, 80);
+	pause.setPosition((window::size.first / 2) - 140, 200);
 
 	drawable_gamemap map(assets::map::box, window::size);
 	drawable_snake& snake = map.getSnake();
 
+	sf::Text score("0", assets::font::arcade, 60);
+	score.setPosition({map.getMapShape().getPosition().x, map.getMapShape().getPosition().y - 70});
+
+
 	unsigned tick = 0;
 	std::string direction = "EAST";
 	bool isAlive = true;
+	bool isPause = false;
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -60,25 +67,37 @@ void game::drawGame(sf::RenderWindow& window) {
 				else if (event.key.code == sf::Keyboard::D) {
 					direction = "EAST";
 				}
+				else if (event.key.code == sf::Keyboard::Escape) {
+					isPause = !isPause;
+				}
 
+				// Убрать
 				if (!isAlive) { return; }
 			}
 		}
 
-		if (isAlive) {
+		if (isAlive && !isPause) {
 			window.clear();
 			window.draw(map.getMapShape());
+			window.draw(score);
 			window.draw(map.getCommonShape());
+			if (map.hasBooster()) {
+				window.draw(map.getBoosterShape());
+			}
+
 			for (const drawable_block& block : map.getWallShapes()) { window.draw(block.getShape()); }
 			for (const drawable_block& block : snake.getSnake()) { window.draw(block.getShape()); }
 
-			if ((tick % (snake::maxSpeed - properties::speed) == 0)) { snake.move(direction); map.update(); }
+			if ((tick % (snake::maxSpeed - properties::speed) == 0)) { snake.move(direction); map.update(); score.setString(std::to_string(map.getScore())); }
 			for (const drawable_block& block : map.getWallShapes()) { if (snake.hit(block)) { isAlive = false; }}
 			std::vector<drawable_block> snake_blocks = map.getSnake().getSnake();
 			for (unsigned i = 1; i < snake_blocks.size(); ++i) { if (snake.hit(snake_blocks[i])) { isAlive = false; } }
 			if (++tick == window::framerate) { tick = 0; }
 		}
-		else {
+		else if (isPause) {
+			window.draw(pause);
+		}
+		else if (!isAlive) {
 			window.draw(gameover);
 		}
 

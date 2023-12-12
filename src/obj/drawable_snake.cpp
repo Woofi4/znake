@@ -41,7 +41,6 @@ void drawable_snake::move(std::string direction) {
 	std::pair<float, float> dir = snake::directions[direction];
 	dir.first = -dir.first;
 	dir.second = -dir.second;
-
 	if (_direction != dir) {
 		_direction = snake::directions[direction];
 	}

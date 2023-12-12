@@ -17,6 +17,8 @@ class drawable_gamemap : public gamemap {
 	food _booster;
 	sf::RectangleShape _commonShape;
 	sf::RectangleShape _boosterShape;
+	sf::Clock _timer;
+	unsigned _score;
 
 public:
 	drawable_gamemap(const gamemap& mapObject, const std::pair<unsigned, unsigned>& windowSize);
@@ -29,6 +31,7 @@ public:
 	const sf::RectangleShape& getCommonShape() const;
 	bool hasBooster() const;
 	const sf::RectangleShape& getBoosterShape() const;
+	unsigned getScore() const;
 };
 
 #endif

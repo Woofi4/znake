@@ -11,9 +11,12 @@ drawable_gamemap::drawable_gamemap(const gamemap& mapObject, const std::pair<uns
 	_common(),
 	_booster(),
 	_commonShape({snake::blockSize, snake::blockSize}),
-	_boosterShape({snake::blockSize, snake::blockSize}) {
+	_boosterShape({snake::blockSize, snake::blockSize}),
+	_timer(),
+	_score(0) {
 
 	_commonShape.setFillColor(sf::Color::Green);
+	_boosterShape.setFillColor(sf::Color::Blue);
 
 	_mapShape.setPosition(_position);
 	_mapShape.setFillColor(sf::Color::Black);
@@ -43,10 +46,35 @@ void drawable_gamemap::update() {
 		_common.isActive = true;
 		_commonShape.setPosition({_position.x + _common.position.first * snake::blockSize, _position.y + _common.position.second * snake::blockSize});
 	}
-	
-	if (_snake.getHeadX() == _commonShape.getPosition().x && _snake.getHeadY() == _commonShape.getPosition().y) {
+
+	if (_common.isActive && _snake.getHeadX() == _commonShape.getPosition().x && _snake.getHeadY() == _commonShape.getPosition().y) {
 		_common.isActive = false;
 		_snake.add();
+		_score += 20;
+	}
+
+	if (!_booster.isActive && _timer.getElapsedTime().asSeconds() >= 15) {
+		unsigned randX = rand() % _size.first;
+		unsigned randY = rand() % _size.second;
+		for (std::pair<unsigned, unsigned> wall : _walls) {
+			while (randX == wall.first && randY == wall.second) { randX = rand() % _size.first; randY = rand() % _size.second; }
+		}
+
+		_booster.position = {randX, randY};
+		_booster.isActive = true;
+		_boosterShape.setPosition({_position.x + _booster.position.first * snake::blockSize, _position.y + _booster.position.second * snake::blockSize});
+		_timer.restart();
+	}
+	else if (_booster.isActive && _timer.getElapsedTime().asSeconds() >= 5) {
+		_booster.isActive = false;
+		_timer.restart();
+	}
+
+	if (_booster.isActive && _snake.getHeadX() == _boosterShape.getPosition().x && _snake.getHeadY() == _boosterShape.getPosition().y) {
+		_booster.isActive = false;
+		_timer.restart();
+		_snake.add();
+		_score += (5 - _timer.getElapsedTime().asSeconds()) * 20;
 	}
 }
 
@@ -55,3 +83,7 @@ const sf::RectangleShape& drawable_gamemap::getCommonShape() const { return _com
 bool drawable_gamemap::hasBooster() const { return _booster.isActive; }
 
 const sf::RectangleShape& drawable_gamemap::getBoosterShape() const { return _boosterShape; }
+
+unsigned drawable_gamemap::getScore() const {
+	return _score;
+}
