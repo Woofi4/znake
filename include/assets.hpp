@@ -6,7 +6,7 @@
 
 namespace assets {
 	namespace font {
-
+		extern sf::Font bebas;
 	};
 
 	namespace texture {
