@@ -2,6 +2,7 @@
 #define OPTION_HPP
 
 #include "button.hpp"
+#include "scaled.hpp"
 
 #include <string>
 
@@ -11,12 +12,13 @@ class option : public button {
 	int _index;
 
 public:
-	option(const scaled&, const sf::Texture&, const std::vector<std::string>&);
-	option(scaled&&, const sf::Texture&, const std::vector<std::string>&);
+	option(const scaled& scaled, const sf::Texture& active, const std::vector<std::string>& values);
+	option(scaled&& scaled, const sf::Texture& active, const std::vector<std::string>& values);
 	option(const scaled& scaled, const sf::Texture& active, std::vector<std::string>&& values);
 	option(scaled&& scaled, const sf::Texture& active, std::vector<std::string>&& values);
 	void next();
 	void prev();
+	const sf::Text& getText() const;
 	const std::string& getValue() const;
 };
 
