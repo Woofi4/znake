@@ -39,7 +39,7 @@ void game::drawGame(sf::RenderWindow& window) {
 	sf::Text score1p("0", assets::font::arcade, 60);
 	sf::Text score2p("0", assets::font::arcade, 60);
 
-	drawable_gamemap map(assets::map::box, window::size, game::properties::has2p, game::properties::hasBot);
+	drawable_gamemap map(assets::map::labyrinth, window::size, game::properties::has2p, game::properties::hasBot);
 	drawable_snake& snake = map.getSnake();
 	drawable_snake& bot = map.getBot();
 	

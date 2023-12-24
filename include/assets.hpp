@@ -25,6 +25,8 @@ namespace assets {
 
 	namespace map {
 		extern gamemap box;
+		extern gamemap tunnel;
+		extern gamemap labyrinth;
 	};
 	
 

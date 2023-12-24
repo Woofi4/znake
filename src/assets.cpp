@@ -19,6 +19,8 @@ namespace assets::sound {
 
 namespace assets::map {
 	gamemap box;
+	gamemap tunnel;
+	gamemap labyrinth;
 };
 
 
@@ -34,6 +36,16 @@ bool assets::load() {
 	if (!stream) { return false; }
 	map::box = *gamemap::load(stream);
 	stream.close();
+
+	std::ifstream stream1("data/maps/tunnel.json");
+	if (!stream1) { return false; }
+	map::tunnel = *gamemap::load(stream1);
+	stream1.close();
+
+	std::ifstream stream2("data/maps/labyrinth.json");
+	if (!stream2) { return false; }
+	map::labyrinth = *gamemap::load(stream2);
+	stream2.close();
 
 	return true;
 }
