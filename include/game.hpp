@@ -10,7 +10,10 @@
 
 namespace game {
 	namespace properties {
-
+		const unsigned speed = 0;
+		const bool reverseControl = false;
+		const bool has2p = false;
+		const bool hasBot = false;
 	};
 
 	namespace window {
@@ -21,6 +24,8 @@ namespace game {
 		extern const int defaultFontSize;
 		extern const sf::Font& textinputFont;
 		extern const sf::Font& standartFont;
+		const unsigned framerate = 30;
+		const float blockSize = 32;
 	};
 
 	namespace player {
