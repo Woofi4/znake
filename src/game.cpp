@@ -35,7 +35,6 @@ namespace game::properties {
 bool game::load() {
 	std::ifstream json("data/config.json");
 	if (!json) { return false; }
-
 	nlohmann::json config = nlohmann::json::parse(json);
 	json.close();
 
@@ -65,12 +64,22 @@ bool game::load() {
 
 #include <iostream>
 void game::drawGame(sf::RenderWindow& window) {
-	sf::Text gameover("Game over", assets::font::bebas, 80);
-	sf::Text pause("Paused", assets::font::bebas, 80);
+	int round = game::properties::roundsCount;
+	int curr = 0;
+
+	int score1p_value = 0;
+	int score2p_value = 0;
 	sf::Text score1p("0", assets::font::bebas, 60);
 	sf::Text score2p("0", assets::font::bebas, 60);
 
+	while (curr != round) {
+	sf::Text gameover("Game over", assets::font::bebas, 80);
+	sf::Text pause("Paused", assets::font::bebas, 80);
+
+
 	drawable_gamemap map(assets::map::box, {window::size.x, window::size.y}, game::properties::has2p, game::properties::hasBot);
+	map.setScore1p(score1p_value);
+	map.setScore2p(score2p_value);
 	drawable_snake& snake = map.getSnake();
 	drawable_snake& bot = map.getBot();
 
@@ -85,9 +94,11 @@ void game::drawGame(sf::RenderWindow& window) {
 	std::string direction2p = "EAST";
 	bool isAlive = true;
 	bool isPause = false;
-	while (window.isOpen()) {
+	bool flag = false;
+	while (window.isOpen() && !flag) {
 		sf::Event event;
-		while (window.pollEvent(event)) {
+
+		while (window.pollEvent(event) && !flag) {
 			if (event.type == sf::Event::Closed) { window.close(); }
 			else if (event.type == sf::Event::KeyPressed) {
 				if (event.key.code == sf::Keyboard::W) {
@@ -120,8 +131,7 @@ void game::drawGame(sf::RenderWindow& window) {
 					isPause = !isPause;
 				}
 
-				// Убрать
-				if (!isAlive) { return; }
+				if (!isAlive) { curr++; flag = true; }
 			}
 		}
 
@@ -142,10 +152,13 @@ void game::drawGame(sf::RenderWindow& window) {
 			if (game::properties::has2p) {
 				for (const drawable_block& block : bot.getSnake()) { window.draw(block.getShape()); }
 			}
+
 			if ((tick % (snake::maxSpeed - properties::speed) == 0)) {
 				snake.move(game::properties::reverseControl ? direction2p : direction1p);
 				if (game::properties::has2p && !game::properties::hasBot) { bot.move(game::properties::reverseControl ? direction1p : direction2p); };
 				map.update();
+				score1p_value = map.getScore1p();
+				score2p_value = map.getScore2p();
 				score1p.setString(game::properties::p1name+": "+std::to_string(map.getScore1p()));
 				score2p.setString(game::properties::p2name+": "+std::to_string(map.getScore2p()));
 			}
@@ -157,13 +170,14 @@ void game::drawGame(sf::RenderWindow& window) {
 			}
 			std::vector<drawable_block> snake_blocks = snake.getSnake();
 			for (unsigned i = 1; i < snake_blocks.size(); ++i) { if (snake.hit(snake_blocks[i])) { isAlive = false; } }
-
+			
 			if (game::properties::has2p) {
 				for (const drawable_block& block : map.getWallShapes()) { if (bot.hit(block)) { isAlive = false; }}
 				for (const drawable_block& block : snake.getSnake()) { if (bot.hit(block)) { isAlive = false; }}
 				std::vector<drawable_block> bot_blocks = bot.getSnake();
 				for (unsigned i = 1; i < bot_blocks.size(); ++i) { if (bot.hit(bot_blocks[i])) { isAlive = false; } }
 			}
+
 
 			if (++tick == window::framerate) { tick = 0; }
 		}
@@ -176,6 +190,9 @@ void game::drawGame(sf::RenderWindow& window) {
 
 		window.display();
 	}
+	}
+
+	return;
 };
 
 void game::drawStartMenu(sf::RenderWindow& window) {
@@ -187,15 +204,15 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 
 	bool exit = false;
 	button backButton(scaled(assets::texture::button, {100, 100}, game::window::factors),
-			assets::texture::selectedButton, sf::Text("Back", window::standartFont));
+					  assets::texture::selectedButton, sf::Text("Back", window::standartFont));
 
 	sf::Vector2f firstPlayerMenuPos(200, 200);
 	std::vector<std::vector<std::any>> levels = {
 			std::vector<std::any> {
-				textinput (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y},
-					game::window::factors),	assets::texture::selectedButton),
-				option (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+100}, game::window::factors),
-					assets::texture::selectedButton,std::vector<std::string>{"green", "red", "blue"}),
+					textinput (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y},
+									  game::window::factors),	assets::texture::selectedButton),
+					option (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+100}, game::window::factors),
+							assets::texture::selectedButton,std::vector<std::string>{"green", "red", "blue"}),
 			},
 			std::vector<std::any> {
 					option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y-100}, game::window::factors),
@@ -211,7 +228,7 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 			},
 			std::vector<std::any> {
 					button (scaled(assets::texture::button, {firstPlayerMenuPos.x+200, firstPlayerMenuPos.y+150}, game::window::factors),
-						assets::texture::selectedButton, sf::Text("START", window::standartFont))
+							assets::texture::selectedButton, sf::Text("START", window::standartFont))
 			}
 	};
 
@@ -219,7 +236,7 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 			option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y-100}, game::window::factors),
 					assets::texture::selectedButton,std::vector<std::string>{"Duo", "Solo"}),
 			textinput (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y},
-					game::window::factors),	assets::texture::selectedButton),
+							  game::window::factors),	assets::texture::selectedButton),
 			option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y+100}, game::window::factors),
 					assets::texture::selectedButton,std::vector<std::string>{"green", "red", "blue"}),
 	};

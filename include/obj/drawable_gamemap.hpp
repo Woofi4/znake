@@ -39,6 +39,8 @@ public:
 	const sf::RectangleShape& getBoosterShape() const;
 	unsigned getScore1p() const;
 	unsigned getScore2p() const;
+	void setScore1p(unsigned score);
+	void setScore2p(unsigned score);
 };
 
 #endif

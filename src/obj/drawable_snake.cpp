@@ -59,3 +59,5 @@ const std::vector<drawable_block>& drawable_snake::getSnake() const { return _sn
 bool drawable_snake::hit(const block& block) const { return _snake[0].getX() == block.getX() && _snake[0].getY() == block.getY(); }
 
 void drawable_snake::setDirection(const std::pair<float, float>& direction) { _direction = direction; }
+
+std::pair<float, float> drawable_snake::getDirection() { return _direction; }

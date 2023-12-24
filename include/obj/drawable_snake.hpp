@@ -29,6 +29,7 @@ public:
 	const std::vector<drawable_block>& getSnake() const;
 	bool hit(const block& block) const;
 	void setDirection(const std::pair<float, float>& direction);
+	std::pair<float, float> getDirection();
 };
 
 #endif

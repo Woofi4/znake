@@ -2,6 +2,8 @@
 #define GAME_HPP
 
 #include "../external/nlohmann/json.hpp"
+#include "obj/drawable_gamemap.hpp"
+#include "../include/ui/button.hpp"
 #include "assets.hpp"
 
 #include <fstream>
@@ -10,10 +12,10 @@
 
 namespace game {
 	namespace properties {
-		extern unsigned speed;
-		extern bool reverseControl;
-		extern bool has2p;
-		extern bool hasBot;
+		const unsigned speed = 0;
+		const bool reverseControl = false;
+		const bool has2p = false;
+		const bool hasBot = false;
 		extern int roundsCount;
 		extern std::string p2name;
 		extern std::string p1name;
