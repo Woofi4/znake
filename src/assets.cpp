@@ -36,21 +36,18 @@ bool assets::load() {
 	if (!texture::start_button_selected.loadFromFile("data/textures/start_button_selected.png")) { return false; }
 	if (!texture::snake_skin.loadFromFile("data/textures/snake_skin.png")) { return false; }
 	if (!texture::wall.loadFromFile("data/textures/wall.png")) { return false; }
-
-	std::ifstream stream("data/maps/box.json");
-	if (!stream) { return false; }
-	map::box = *gamemap::load(stream);
-	stream.close();
-
-	return true;
-}
-bool assets::load() {
 	if (!texture::mainMenuBackground.loadFromFile("data/img/main_menu_background.png")) { return false; }
 	if (!texture::button.loadFromFile("data/img/button.png")) { return false; }
 	if (!texture::selectedButton.loadFromFile("data/img/selected_button.png")) { return false; }
 	if (!font::bebas.loadFromFile("data/fonts/Bebas-Regular.ttf")) { return false; }
 	if (!font::play.loadFromFile("data/fonts/Play-Bold.ttf")) { return false; }
 	if (!font::opensans.loadFromFile("data/fonts/OpenSans-MediumItalic.ttf")) { return false; }
+
+
+	std::ifstream stream("data/maps/box.json");
+	if (!stream) { return false; }
+	map::box = *gamemap::load(stream);
+	stream.close();
 
 	return true;
 }

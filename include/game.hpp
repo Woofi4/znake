@@ -24,7 +24,7 @@ namespace game {
 		extern const int defaultFontSize;
 		extern const sf::Font& textinputFont;
 		extern const sf::Font& standartFont;
-		const unsigned framerate = 30;
+		const unsigned framerate = 45;
 		const float blockSize = 32;
 	};
 

@@ -1,6 +1,7 @@
 #ifndef DRAWABLE_SNAKE_HPP
 #define DRAWABLE_SNAKE_HPP
 
+#include <unordered_map>
 #include "drawable_block.hpp"
 
 #include "vector"

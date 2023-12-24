@@ -1,4 +1,5 @@
 #include "../../include/obj/drawable_snake.hpp"
+#include "../../include/game.hpp"
 
 
 namespace snake {
@@ -10,9 +11,9 @@ namespace snake {
 
 
 bool snake::load() {
-	blockSize = 32;
+	blockSize = 32*game::window::factors.y;
 	defaultSize = 5;
-	maxSpeed = 8;
+	maxSpeed = 6;
 	directions = {
 		{"NORTH", {0, -1}},
 		{"WEST", {-1, 0}},

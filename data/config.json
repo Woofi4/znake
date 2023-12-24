@@ -2,8 +2,8 @@
 	"window": {
 		"title": "znake",
 		"fullscreen": false,
-		"width": 1200,
-		"height": 800,
+		"width": 1920,
+		"height": 1080,
 		
 		"default_width": 1200,
 		"default_height": 800

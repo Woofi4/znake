@@ -4,6 +4,7 @@
 #include "../include/ui/button.hpp"
 #include "../include/ui/option.hpp"
 #include "../include/ui/textinput.hpp"
+#include "../include/obj/drawable_gamemap.hpp"
 
 
 namespace game::window {
@@ -52,12 +53,12 @@ void game::drawGame(sf::RenderWindow& window) {
 	sf::Text score1p("0", assets::font::arcade, 60);
 	sf::Text score2p("0", assets::font::arcade, 60);
 
-	drawable_gamemap map(assets::map::box, window::size, game::properties::has2p, game::properties::hasBot);
+	drawable_gamemap map(assets::map::box, {window::size.x, window::size.y}, game::properties::has2p, game::properties::hasBot);
 	drawable_snake& snake = map.getSnake();
 	drawable_snake& bot = map.getBot();
 
-	gameover.setPosition((window::size.first / 2) - 180, 200);
-	pause.setPosition((window::size.first / 2) - 140, 200);
+	gameover.setPosition((window::size.x / 2) - 180, 200);
+	pause.setPosition((window::size.x / 2) - 140, 200);
 	score1p.setPosition({map.getMapShape().getPosition().x, map.getMapShape().getPosition().y - 70});
 	score2p.setPosition({map.getMapShape().getPosition().x + map.getMapShape().getSize().x - 60, map.getMapShape().getPosition().y - 70});
 
@@ -212,7 +213,7 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 				focusID = -1;
 				window.setMouseCursorVisible(true);
 				if (backButton.check(sf::Mouse::getPosition(window)) && event.type == sf::Event::MouseButtonPressed) {
-					exit = true;
+					drawGame(window);
 				}
 				for(int floor=0; floor < levels.size(); ++floor){
 					for(int i=0; i<levels[floor].size(); ++i){
