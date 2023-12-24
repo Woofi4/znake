@@ -115,3 +115,11 @@ unsigned drawable_gamemap::getScore1p() const {
 unsigned drawable_gamemap::getScore2p() const {
 	return _score2p;
 }
+
+void drawable_gamemap::setScore1p(unsigned score) {
+	_score1p = score;
+}
+
+void drawable_gamemap::setScore2p(unsigned score) {
+	_score2p = score;;
+}

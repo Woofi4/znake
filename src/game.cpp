@@ -34,12 +34,22 @@ bool game::load() {
 
 #include <iostream>
 void game::drawGame(sf::RenderWindow& window) {
-	sf::Text gameover("Game over", assets::font::arcade, 80);
-	sf::Text pause("Paused", assets::font::arcade, 80);
+	int round = game::properties::roundsCount;
+	int curr = 0;
+
+	int score1p_value = 0;
+	int score2p_value = 0;
 	sf::Text score1p("0", assets::font::arcade, 60);
 	sf::Text score2p("0", assets::font::arcade, 60);
 
+	while (curr != round) {
+	sf::Text gameover("Game over", assets::font::arcade, 80);
+	sf::Text pause("Paused", assets::font::arcade, 80);
+	
+
 	drawable_gamemap map(assets::map::labyrinth, window::size, game::properties::has2p, game::properties::hasBot);
+	map.setScore1p(score1p_value);
+	map.setScore2p(score2p_value);
 	drawable_snake& snake = map.getSnake();
 	drawable_snake& bot = map.getBot();
 	
@@ -54,9 +64,11 @@ void game::drawGame(sf::RenderWindow& window) {
 	std::string direction2p = "EAST";
 	bool isAlive = true;
 	bool isPause = false;
-	while (window.isOpen()) {
+	bool flag = false;
+	while (window.isOpen() && !flag) {
 		sf::Event event;
-		while (window.pollEvent(event)) {
+		
+		while (window.pollEvent(event) && !flag) {
 			if (event.type == sf::Event::Closed) { window.close(); }
 			else if (event.type == sf::Event::KeyPressed) {
 				if (event.key.code == sf::Keyboard::W) {
@@ -90,7 +102,7 @@ void game::drawGame(sf::RenderWindow& window) {
 				}
 
 				// Убрать
-				if (!isAlive) { return; }
+				if (!isAlive) { curr++; flag = true; }
 			}
 		}
 
@@ -116,6 +128,9 @@ void game::drawGame(sf::RenderWindow& window) {
 				snake.move(game::properties::reverseControl ? direction2p : direction1p);
 				if (game::properties::has2p && !game::properties::hasBot) { bot.move(game::properties::reverseControl ? direction1p : direction2p); };
 				map.update();
+
+				score1p_value = map.getScore1p();
+				score2p_value = map.getScore2p();
 				score1p.setString(std::to_string(map.getScore1p()));
 				score2p.setString(std::to_string(map.getScore2p()));
 			}
@@ -143,6 +158,9 @@ void game::drawGame(sf::RenderWindow& window) {
 
 		window.display();
 	}
+	}
+
+	return;
 };
 
 void game::drawStartMenu(sf::RenderWindow& window) { };

@@ -16,6 +16,7 @@ namespace game {
 		const bool reverseControl = false;
 		const bool has2p = false;
 		const bool hasBot = false;
+		const int roundsCount = 3;
 	};
 
 	namespace window {
