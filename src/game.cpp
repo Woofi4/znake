@@ -101,7 +101,6 @@ void game::drawGame(sf::RenderWindow& window) {
 					isPause = !isPause;
 				}
 
-				// Убрать
 				if (!isAlive) { curr++; flag = true; }
 			}
 		}
@@ -136,7 +135,9 @@ void game::drawGame(sf::RenderWindow& window) {
 			}
 
 			for (const drawable_block& block : map.getWallShapes()) { if (snake.hit(block)) { isAlive = false; }}
-			for (const drawable_block& block : bot.getSnake()) { if (snake.hit(block)) { isAlive = false; }}
+			if (game::properties::has2p) {
+				for (const drawable_block& block : bot.getSnake()) { if (snake.hit(block)) { isAlive = false; }}
+			}
 			std::vector<drawable_block> snake_blocks = snake.getSnake();
 			for (unsigned i = 1; i < snake_blocks.size(); ++i) { if (snake.hit(snake_blocks[i])) { isAlive = false; } }
 			
@@ -146,6 +147,7 @@ void game::drawGame(sf::RenderWindow& window) {
 				std::vector<drawable_block> bot_blocks = bot.getSnake();
 				for (unsigned i = 1; i < bot_blocks.size(); ++i) { if (bot.hit(bot_blocks[i])) { isAlive = false; } }
 			}
+			
 
 			if (++tick == window::framerate) { tick = 0; }
 		}

@@ -57,12 +57,33 @@ void drawable_gamemap::update() {
 
 	if (_common.isActive && _snake.getHeadX() == _commonShape.getPosition().x && _snake.getHeadY() == _commonShape.getPosition().y) {
 		_common.isActive = false;
-		_snake.add();
+
+		bool flag = true;
+		for (const drawable_block& block : _wallShapes) {
+			if ((_snake.getHeadX() + _snake.getDirection().first * snake::blockSize) == block.getX() && (_snake.getHeadY() + _snake.getDirection().second * snake::blockSize) == block.getY()) {
+				flag = false;
+				break;
+			}
+		}
+
+		if (flag)
+			_snake.add();
+
 		_score1p += 20;
 	}
 	else if (_has2p && _common.isActive && _bot.getHeadX() == _commonShape.getPosition().x && _bot.getHeadY() == _commonShape.getPosition().y) {
 		_common.isActive = false;
-		_bot.add();
+
+		bool flag = true;
+		for (const drawable_block& block : _wallShapes) {
+			if ((_bot.getHeadX() + _bot.getDirection().first * snake::blockSize) == block.getX() && (_bot.getHeadY() + _bot.getDirection().second * snake::blockSize) == block.getY()) {
+				flag = false;
+				break;
+			}
+		}
+
+		if (flag)
+			_bot.add();
 		_score2p += 20;
 	}
 
@@ -86,13 +107,33 @@ void drawable_gamemap::update() {
 	if (_booster.isActive && _snake.getHeadX() == _boosterShape.getPosition().x && _snake.getHeadY() == _boosterShape.getPosition().y) {
 		_booster.isActive = false;
 		_timer.restart();
-		_snake.add();
+
+		bool flag = true;
+		for (const drawable_block& block : _wallShapes) {
+			if ((_snake.getHeadX() + _snake.getDirection().first * snake::blockSize) == block.getX() && (_snake.getHeadY() + _snake.getDirection().second * snake::blockSize) == block.getY()) {
+				flag = false;
+				break;
+			}
+		}
+
+		if (flag)
+			_snake.add();
 		_score1p += (5 - _timer.getElapsedTime().asSeconds()) * 20;
 	}
 	else if (_has2p && _booster.isActive && _bot.getHeadX() == _boosterShape.getPosition().x && _bot.getHeadY() == _boosterShape.getPosition().y) {
 		_booster.isActive = false;
 		_timer.restart();
-		_bot.add();
+
+		bool flag = true;
+		for (const drawable_block& block : _wallShapes) {
+			if ((_bot.getHeadX() + _bot.getDirection().first * snake::blockSize) == block.getX() && (_bot.getHeadY() + _bot.getDirection().second * snake::blockSize) == block.getY()) {
+				flag = false;
+				break;
+			}
+		}
+
+		if (flag)
+			_bot.add();
 		_score2p += (5 - _timer.getElapsedTime().asSeconds()) * 20;
 	}
 
