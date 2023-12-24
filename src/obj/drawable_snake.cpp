@@ -11,7 +11,7 @@ namespace snake {
 
 
 bool snake::load() {
-	blockSize = 32*game::window::factors.y;
+	blockSize = 50;
 	defaultSize = 5;
 	maxSpeed = 6;
 	directions = {

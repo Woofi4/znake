@@ -8,7 +8,7 @@ int main() {
 	sf::RenderWindow window(
 		sf::VideoMode(game::window::size.x, game::window::size.y),
 		game::window::title,
-		(game::window::fullscreen ? sf::Style::Fullscreen : sf::Style::Default) & sf::Style::Close
+		game::window::fullscreen ? sf::Style::Fullscreen : sf::Style::Default
 	);
 	window.setFramerateLimit(game::window::framerate);
 

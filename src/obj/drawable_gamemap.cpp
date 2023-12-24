@@ -44,10 +44,10 @@ const std::vector<drawable_block> drawable_gamemap::getWallShapes() const { retu
 
 void drawable_gamemap::update() {
 	if (!_common.isActive) {
-		unsigned randX = rand() % _size.first;
-		unsigned randY = rand() % _size.second;
+		unsigned randX = 1 + rand() % (_size.first - 2);
+		unsigned randY = 1 + rand() % (_size.second - 2);
 		for (std::pair<unsigned, unsigned> wall : _walls) {
-			while (randX == wall.first && randY == wall.second) { randX = rand() % _size.first; randY = rand() % _size.second; }
+			while (randX == wall.first && randY == wall.second) { randX = 1 + rand() % (_size.first - 2); randY = 1 + rand() % (_size.second - 2); }
 		}
 
 		_common.position = {randX, randY};
@@ -67,10 +67,10 @@ void drawable_gamemap::update() {
 	}
 
 	if (!_booster.isActive && _timer.getElapsedTime().asSeconds() >= 15) {
-		unsigned randX = rand() % _size.first;
-		unsigned randY = rand() % _size.second;
+		unsigned randX = 1 + rand() % (_size.first - 2);
+		unsigned randY = 1 + rand() % (_size.second - 2);
 		for (std::pair<unsigned, unsigned> wall : _walls) {
-			while (randX == wall.first && randY == wall.second) { randX = rand() % _size.first; randY = rand() % _size.second; }
+			while (randX == wall.first && randY == wall.second) { randX = 1 + rand() % (_size.first - 2); randY = 1 + rand() % (_size.second - 2); }
 		}
 
 		_booster.position = {randX, randY};

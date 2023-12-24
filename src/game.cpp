@@ -21,6 +21,16 @@ namespace game::player {
 	std::string name;
 }
 
+namespace game::properties {
+	unsigned speed;
+	bool reverseControl;
+	bool has2p;
+	bool hasBot;
+	int roundsCount;
+	std::string p2name;
+	std::string p1name;
+};
+
 
 bool game::load() {
 	std::ifstream json("data/config.json");
@@ -43,15 +53,22 @@ bool game::load() {
 
 	player::name = config["player"]["name"];
 
+	game::properties::speed = 0;
+	game::properties::reverseControl = false;
+	game::properties::has2p = false;
+	game::properties::hasBot = true;
+	game::properties::roundsCount = 0;
+	game::properties::p2name = "P2";
+	game::properties::p1name = "P1";
 	return true;
 }
 
 #include <iostream>
 void game::drawGame(sf::RenderWindow& window) {
-	sf::Text gameover("Game over", assets::font::arcade, 80);
-	sf::Text pause("Paused", assets::font::arcade, 80);
-	sf::Text score1p("0", assets::font::arcade, 60);
-	sf::Text score2p("0", assets::font::arcade, 60);
+	sf::Text gameover("Game over", assets::font::bebas, 80);
+	sf::Text pause("Paused", assets::font::bebas, 80);
+	sf::Text score1p("0", assets::font::bebas, 60);
+	sf::Text score2p("0", assets::font::bebas, 60);
 
 	drawable_gamemap map(assets::map::box, {window::size.x, window::size.y}, game::properties::has2p, game::properties::hasBot);
 	drawable_snake& snake = map.getSnake();
@@ -125,17 +142,19 @@ void game::drawGame(sf::RenderWindow& window) {
 			if (game::properties::has2p) {
 				for (const drawable_block& block : bot.getSnake()) { window.draw(block.getShape()); }
 			}
-
 			if ((tick % (snake::maxSpeed - properties::speed) == 0)) {
 				snake.move(game::properties::reverseControl ? direction2p : direction1p);
 				if (game::properties::has2p && !game::properties::hasBot) { bot.move(game::properties::reverseControl ? direction1p : direction2p); };
 				map.update();
-				score1p.setString(std::to_string(map.getScore1p()));
-				score2p.setString(std::to_string(map.getScore2p()));
+				score1p.setString(game::properties::p1name+": "+std::to_string(map.getScore1p()));
+				score2p.setString(game::properties::p2name+": "+std::to_string(map.getScore2p()));
 			}
 
 			for (const drawable_block& block : map.getWallShapes()) { if (snake.hit(block)) { isAlive = false; }}
-			for (const drawable_block& block : bot.getSnake()) { if (snake.hit(block)) { isAlive = false; }}
+
+			if (game::properties::has2p) {
+				for (const drawable_block &block: bot.getSnake()) { if (snake.hit(block)) { isAlive = false; }}
+			}
 			std::vector<drawable_block> snake_blocks = snake.getSnake();
 			for (unsigned i = 1; i < snake_blocks.size(); ++i) { if (snake.hit(snake_blocks[i])) { isAlive = false; } }
 
@@ -176,7 +195,7 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 				textinput (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y},
 					game::window::factors),	assets::texture::selectedButton),
 				option (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+100}, game::window::factors),
-					assets::texture::selectedButton,std::vector<std::string>{"color1", "color2"}),
+					assets::texture::selectedButton,std::vector<std::string>{"green", "red", "blue"}),
 			},
 			std::vector<std::any> {
 					option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y-100}, game::window::factors),
@@ -184,11 +203,15 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 			},
 			std::vector<std::any> {
 					option (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+300}, game::window::factors),
-							assets::texture::selectedButton,std::vector<std::string>{"color1", "color2"}),
+							assets::texture::selectedButton,std::vector<std::string>{"0", "1"}),
 					option (scaled(assets::texture::button, {firstPlayerMenuPos.x+300, firstPlayerMenuPos.y+300}, game::window::factors),
-							assets::texture::selectedButton,std::vector<std::string>{"color1", "color2"}),
+							assets::texture::selectedButton,std::vector<std::string>{"box", "commingsoon"}),
 					option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y+300}, game::window::factors),
-							assets::texture::selectedButton,std::vector<std::string>{"color1", "color2"}),
+							assets::texture::selectedButton,std::vector<std::string>{"1", "2", "3", "4", "5", "6"}),
+			},
+			std::vector<std::any> {
+					button (scaled(assets::texture::button, {firstPlayerMenuPos.x+200, firstPlayerMenuPos.y+150}, game::window::factors),
+						assets::texture::selectedButton, sf::Text("START", window::standartFont))
 			}
 	};
 
@@ -198,7 +221,7 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 			textinput (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y},
 					game::window::factors),	assets::texture::selectedButton),
 			option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y+100}, game::window::factors),
-					assets::texture::selectedButton,std::vector<std::string>{"color1", "color2"}),
+					assets::texture::selectedButton,std::vector<std::string>{"green", "red", "blue"}),
 	};
 	std::vector<std::any> SPAdd = {
 			option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y-100}, game::window::factors),
@@ -206,6 +229,13 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 	};
 
 	while (window.isOpen()&&!exit) {
+		if(level>=levels.size()){
+			game::properties::has2p = (std::any_cast<option&>(levels[1][0]).getValue()=="Duo")?true:false;
+			game::properties::hasBot = (std::any_cast<option&>(levels[2][0]).getValue()=="1")?true:false;
+			game::properties::roundsCount = stoi(std::any_cast<option&>(levels[2][2]).getValue());
+
+			drawGame(window);
+		}
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) { window.close(); }
@@ -213,7 +243,7 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 				focusID = -1;
 				window.setMouseCursorVisible(true);
 				if (backButton.check(sf::Mouse::getPosition(window)) && event.type == sf::Event::MouseButtonPressed) {
-					drawGame(window);
+					exit = true;
 				}
 				for(int floor=0; floor < levels.size(); ++floor){
 					for(int i=0; i<levels[floor].size(); ++i){
@@ -223,6 +253,15 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 								focusID = i;
 								if(event.type == sf::Event::MouseButtonPressed){
 									level = floor;
+									if(std::any_cast<button&>(levels[floor][i]).getText().getString()=="START") {
+										exit = true;
+
+										game::properties::has2p = (std::any_cast<option&>(levels[1][0]).getValue()=="Duo")?true:false;
+										game::properties::hasBot = (std::any_cast<option&>(levels[2][0]).getValue()=="1")?true:false;
+										game::properties::roundsCount = stoi(std::any_cast<option&>(levels[2][2]).getValue());
+
+										drawGame(window);
+									}
 								}
 							}
 						}
@@ -288,7 +327,7 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 						if(type == typeid(option)){	std::any_cast<option&>(levels[level][focusID]).prev(); }
 						continue;
 					}else{
-						focusID = ((--focusID)+levels[level].size()) % levels[level].size();
+						focusID = (++focusID) % levels[level].size();
 					}
 				}
 				if (event.key.code == sf::Keyboard::Down) {
@@ -296,7 +335,7 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 						auto& type = levels[level][focusID].type();
 						if(type == typeid(option)){	std::any_cast<option&>(levels[level][focusID]).next(); }
 					}else{
-						focusID = (++focusID) % levels[level].size();
+						focusID = ((--focusID)+levels[level].size()) % levels[level].size();
 					}
 				}
 				if (event.key.code == sf::Keyboard::Left) {
@@ -447,13 +486,15 @@ void game::drawSettings(sf::RenderWindow& window) {
 	scaled background(assets::texture::mainMenuBackground, {0, 0}, game::window::factors);
 
 	sf::Vector2f settingsMenuPos(100, 200); //setings block position
+	auto  a = sf::VideoMode::getFullscreenModes();
+	std::vector<std::string> resolutions = {"800x600", "1024x768", "1200x800", "1920x1080", "2560x1440", "3200x1800", "3840x2160"};
 	std::vector<option> settingsOptions = {
 			option (scaled(assets::texture::button, {settingsMenuPos.x, settingsMenuPos.y}, game::window::factors), assets::texture::selectedButton,
-					std::vector<std::string>{"first param", "second param"}),
+					resolutions),
 			option (scaled(assets::texture::button, {settingsMenuPos.x, settingsMenuPos.y+100}, game::window::factors), assets::texture::selectedButton,
-					std::vector<std::string>{"1000", "2000"}),
+					std::vector<std::string>{"fullscreen", "window"}),
 			option (scaled(assets::texture::button, {settingsMenuPos.x, settingsMenuPos.y+200}, game::window::factors), assets::texture::selectedButton,
-					std::vector<std::string>{"box", "no wall", "hunger"})
+					std::vector<std::string>{"arrows", "WASD"})
 	};
 
 	std::vector<button> settingsButtons = {
