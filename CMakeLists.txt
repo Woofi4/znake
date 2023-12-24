@@ -11,5 +11,5 @@ ELSE()
 ENDIF()
 
 
-add_executable(snake src/ui/scaled.cpp src/ui/option.cpp src/ui/button.cpp src/assets.cpp src/game.cpp src/main.cpp)
+add_executable(snake src/ui/scaled.cpp src/ui/option.cpp src/ui/button.cpp src/ui/textinput.cpp src/assets.cpp src/game.cpp src/main.cpp)
 target_link_libraries(snake sfml-graphics sfml-window sfml-system)

@@ -3,6 +3,7 @@
 #include "../include/game.hpp"
 #include "../include/ui/button.hpp"
 #include "../include/ui/option.hpp"
+#include "../include/ui/textinput.hpp"
 
 
 namespace game::window {
@@ -10,6 +11,7 @@ namespace game::window {
 	bool fullscreen;
 	sf::Vector2f size;
 	sf::Vector2f factors;
+	const sf::Font& standartFont = assets::font::play;
 }
 
 namespace game::player {
@@ -27,7 +29,7 @@ bool game::load() {
 	game::window::title = config["window"]["title"];
 
 	game::window::fullscreen = config["window"]["fullscreen"];
-	game::window::size = { 
+	game::window::size = {
 		config["window"]["width"],
 		config["window"]["height"]
 	};
@@ -43,7 +45,194 @@ bool game::load() {
 
 void game::drawGame(sf::RenderWindow& window) { };
 
-void game::drawStartMenu(sf::RenderWindow& window) { };
+void game::drawStartMenu(sf::RenderWindow& window) {
+	scaled background(assets::texture::mainMenuBackground, {0, 0}, game::window::factors);
+	std::string current_mode = "Solo";
+	int focusID = -1;
+	int level = 0;
+	sf::Vector2f firstPlayerMenuPos(100, 200);
+	std::vector<std::vector<std::any>> levels = {
+			std::vector<std::any> {
+				textinput (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y},
+					game::window::factors),	assets::texture::selectedButton),
+				option (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+100}, game::window::factors),
+					assets::texture::selectedButton,std::vector<std::string>{"color1", "color2"}),
+			},
+			std::vector<std::any> {
+					option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y-100}, game::window::factors),
+							assets::texture::selectedButton,std::vector<std::string>{"Solo", "Duo"}),
+			},
+			std::vector<std::any> {
+					option (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+300}, game::window::factors),
+							assets::texture::selectedButton,std::vector<std::string>{"color1", "color2"}),
+					option (scaled(assets::texture::button, {firstPlayerMenuPos.x+300, firstPlayerMenuPos.y+300}, game::window::factors),
+							assets::texture::selectedButton,std::vector<std::string>{"color1", "color2"}),
+					option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y+300}, game::window::factors),
+							assets::texture::selectedButton,std::vector<std::string>{"color1", "color2"}),
+			}
+	};
+
+	std::vector<std::any> SPOption = {
+			option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y-100}, game::window::factors),
+					assets::texture::selectedButton,std::vector<std::string>{"Duo", "Solo"}),
+			textinput (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y},
+					game::window::factors),	assets::texture::selectedButton),
+			option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y+100}, game::window::factors),
+					assets::texture::selectedButton,std::vector<std::string>{"color1", "color2"}),
+	};
+	std::vector<std::any> SPAdd = {
+			option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y-100}, game::window::factors),
+					assets::texture::selectedButton,std::vector<std::string>{"Solo", "Duo"}),
+	};
+
+	while (window.isOpen()) {
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) { window.close(); }
+			else if (event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonPressed) {
+				focusID = -1;
+				window.setMouseCursorVisible(true);
+				for(int floor=0; floor < levels.size(); ++floor){
+					for(int i=0; i<levels[floor].size(); ++i){
+						auto& type = levels[floor][i].type();
+						if(type == typeid(button)){
+							if(std::any_cast<button&>(levels[floor][i]).check(sf::Mouse::getPosition(window))){
+								focusID = i;
+								if(event.type == sf::Event::MouseButtonPressed){
+									level = floor;
+								}
+							}
+						}
+						if(type == typeid(option)){
+							if(std::any_cast<option&>(levels[floor][i]).check(sf::Mouse::getPosition(window))){
+								focusID = i;
+								if(event.type == sf::Event::MouseButtonPressed){
+									level = floor;
+									std::any_cast<option&>(levels[floor][i]).next();
+								}
+							}
+						}
+						if(type == typeid(textinput)){
+							if(std::any_cast<textinput&>(levels[floor][i]).check(sf::Mouse::getPosition(window))){
+								focusID = i;
+								if(event.type == sf::Event::MouseButtonPressed){
+									level = floor;
+									window.setMouseCursorVisible(false);
+								}
+							}
+						}
+					}
+				}
+			}else if (event.type == sf::Event::KeyPressed){
+				window.setMouseCursorVisible(false);
+				if(focusID<0){
+					focusID = 0;
+					auto& type = levels[level][focusID].type();
+					if(type == typeid(button)){	std::any_cast<button&>(levels[level][focusID]).update(1); }
+					if(type == typeid(option)){	std::any_cast<option&>(levels[level][focusID]).update(1); }
+					if(type == typeid(textinput)){	std::any_cast<textinput&>(levels[level][focusID]).update(1); }
+					continue;
+				}
+				if (event.key.code == sf::Keyboard::Escape) {
+					--level;
+					if(level<0){
+						//action = "Back";
+						break;
+					}
+					focusID = 0;
+				}
+				if (event.key.code == sf::Keyboard::Enter) {
+					level++;
+					focusID = 0;
+				}
+				if (event.TextEntered&&focusID>=0) {
+					auto& type = levels[level][focusID].type();
+					int d = event.key.shift ? 65 : 97;
+					if(0<=event.text.unicode && event.text.unicode<=25){
+						if(type == typeid(textinput)){	std::any_cast<textinput&>(levels[level][focusID]).add(event.text.unicode+d); }
+					}
+					if(26<=event.text.unicode && event.text.unicode<35){
+						if(type == typeid(textinput)){	std::any_cast<textinput&>(levels[level][focusID]).add(event.text.unicode+22); }
+					}
+					if(event.text.unicode == 59){
+						if(type == typeid(textinput)){	std::any_cast<textinput&>(levels[level][focusID]).remove(); }
+					}
+				}
+				if (event.key.code == sf::Keyboard::Up) {
+					if(level == 2){
+						auto& type = levels[level][focusID].type();
+						if(type == typeid(option)){	std::any_cast<option&>(levels[level][focusID]).prev(); }
+						continue;
+					}else{
+						focusID = ((--focusID)+levels[level].size()) % levels[level].size();
+					}
+				}
+				if (event.key.code == sf::Keyboard::Down) {
+					if(level == 2){
+						auto& type = levels[level][focusID].type();
+						if(type == typeid(option)){	std::any_cast<option&>(levels[level][focusID]).next(); }
+					}else{
+						focusID = (++focusID) % levels[level].size();
+					}
+				}
+				if (event.key.code == sf::Keyboard::Left) {
+					if(level == 2){
+						focusID = ((--focusID)+levels[level].size()) % levels[level].size();
+					}else{
+						auto& type = levels[level][focusID].type();
+						if(type == typeid(option)){	std::any_cast<option&>(levels[level][focusID]).prev(); }
+					}
+				}
+				if (event.key.code == sf::Keyboard::Right) {
+					if(level == 2){
+						focusID = (++focusID) % levels[level].size();
+					}else{
+						auto& type = levels[level][focusID].type();
+						if(type == typeid(option)){	std::any_cast<option&>(levels[level][focusID]).next(); }
+					}
+				}
+				for(int floor=0; floor < levels.size(); ++floor) {
+					for (int i = 0; i < levels[floor].size(); ++i) {
+						auto &type = levels[floor][i].type();
+						if (type == typeid(button)) { std::any_cast<button &>(levels[floor][i]).update(i == focusID && floor == level); }
+						if (type == typeid(option)) { std::any_cast<option &>(levels[floor][i]).update(i == focusID && floor == level); }
+						if (type == typeid(textinput)) { std::any_cast<textinput &>(levels[floor][i]).update(i == focusID && floor == level); }
+					}
+				}
+			}
+		}
+
+
+
+		if(std::any_cast<option&>(levels[1][0]).getValue()!=current_mode){
+			current_mode = std::any_cast<option&>(levels[1][0]).getValue();
+			if(current_mode == "Solo"){ levels[1] = SPAdd; std::any_cast<option&>(levels[1][0]).update(1); }
+			if(current_mode == "Duo"){ levels[1] = SPOption; std::any_cast<option&>(levels[1][0]).update(1); }
+		}
+
+		window.clear();
+		window.draw(background.getSprite());
+		for(int floor=0; floor < levels.size(); ++floor){
+			for(int i=0; i < levels[floor].size(); ++i){
+				auto& type = levels[floor][i].type();
+				if(type == typeid(button)){
+					window.draw(std::any_cast<button&>(levels[floor][i]).getSprite());
+					window.draw(std::any_cast<button&>(levels[floor][i]).getText());
+				}
+				if(type == typeid(option)){
+					window.draw(std::any_cast<option&>(levels[floor][i]).getSprite());
+					window.draw(std::any_cast<option&>(levels[floor][i]).getText());
+				}
+				if(type == typeid(textinput)){
+					window.draw(std::any_cast<textinput&>(levels[floor][i]).getSprite());
+					window.draw(std::any_cast<textinput&>(levels[floor][i]).getText());
+				}
+			}
+		}
+
+		window.display();
+	}
+};
 
 void game::drawMenu(sf::RenderWindow& window) {
 	scaled background(assets::texture::mainMenuBackground, {0, 0}, game::window::factors);
@@ -51,11 +240,11 @@ void game::drawMenu(sf::RenderWindow& window) {
 	sf::Vector2f mainMenuPos(100, 200); //menu block position
 	std::vector<button> mainMenuButtons = {
 			button (scaled(assets::texture::button, {mainMenuPos.x, mainMenuPos.y}, game::window::factors),
-					assets::texture::selectedButton, sf::Text("Play", assets::font::bebas)),
+					assets::texture::selectedButton, sf::Text("Play", game::window::standartFont)),
 			button (scaled(assets::texture::button, {mainMenuPos.x, mainMenuPos.y+100}, game::window::factors),
-					assets::texture::selectedButton, sf::Text("Settings", assets::font::bebas)),
+					assets::texture::selectedButton, sf::Text("Settings", window::standartFont)),
 			button (scaled(assets::texture::button, {mainMenuPos.x, mainMenuPos.y+200}, game::window::factors),
-					assets::texture::selectedButton, sf::Text("Exit", assets::font::bebas)),
+					assets::texture::selectedButton, sf::Text("Exit", window::standartFont)),
 	};
 
 	int focusID = 0;
@@ -104,7 +293,7 @@ void game::drawMenu(sf::RenderWindow& window) {
 
 		switch (pressed) {
 			case 0:
-				std::cout<<"game";
+				drawStartMenu(window);
 				pressed = -1;
 				break;
 			case 1:
@@ -141,9 +330,9 @@ void game::drawSettings(sf::RenderWindow& window) {
 
 	std::vector<button> settingsButtons = {
 			button (scaled(assets::texture::button, {settingsMenuPos.x, settingsMenuPos.y+400}, game::window::factors),
-					assets::texture::selectedButton, sf::Text("Back", assets::font::bebas)),
+					assets::texture::selectedButton, sf::Text("Back", window::standartFont)),
 			button (scaled(assets::texture::button, {settingsMenuPos.x+300, settingsMenuPos.y+400}, game::window::factors),
-					assets::texture::selectedButton, sf::Text("Save", assets::font::bebas))
+					assets::texture::selectedButton, sf::Text("Save", window::standartFont))
 	};
 
 	int focusID = 0;
@@ -176,8 +365,14 @@ void game::drawSettings(sf::RenderWindow& window) {
 				focusID = focusID < 0 ? 0 : focusID;
 				window.setMouseCursorVisible(false);
 				if (event.key.code == sf::Keyboard::Escape) {
-					confirmMode = false;
-					focusID = 0;
+					if(confirmMode){
+						confirmMode = false;
+						focusID = 0;
+					}else{
+						pressed = settingsOptions.size();
+						break;
+					}
+
 				}
 				if (event.key.code == sf::Keyboard::Enter) {
 					if(confirmMode){
