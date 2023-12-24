@@ -8,6 +8,7 @@ namespace assets {
 	namespace font {
 		extern sf::Font bebas;
 		extern sf::Font play;
+		extern sf::Font opensans;
 	};
 
 	namespace texture {

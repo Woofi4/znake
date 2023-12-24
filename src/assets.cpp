@@ -4,6 +4,7 @@
 namespace assets::font {
 	sf::Font bebas;
 	sf::Font play;
+	sf::Font opensans;
 };
 
 namespace assets::texture {
@@ -24,6 +25,7 @@ bool assets::load() {
 	if (!texture::selectedButton.loadFromFile("data/img/selected_button.png")) { return false; }
 	if (!font::bebas.loadFromFile("data/fonts/Bebas-Regular.ttf")) { return false; }
 	if (!font::play.loadFromFile("data/fonts/Play-Bold.ttf")) { return false; }
+	if (!font::opensans.loadFromFile("data/fonts/OpenSans-MediumItalic.ttf")) { return false; }
 
 	return true;
 }

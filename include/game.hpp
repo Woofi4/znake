@@ -18,6 +18,9 @@ namespace game {
 		extern bool fullscreen;
 		extern sf::Vector2f size;
 		extern sf::Vector2f factors;
+		extern const int defaultFontSize;
+		extern const sf::Font& textinputFont;
+		extern const sf::Font& standartFont;
 	};
 
 	namespace player {

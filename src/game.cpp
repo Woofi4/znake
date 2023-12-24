@@ -11,7 +11,9 @@ namespace game::window {
 	bool fullscreen;
 	sf::Vector2f size;
 	sf::Vector2f factors;
-	const sf::Font& standartFont = assets::font::play;
+	const int defaultFontSize = 30;
+	const sf::Font& textinputFont = assets::font::opensans;
+	const sf::Font& standartFont = assets::font::bebas;
 }
 
 namespace game::player {
@@ -47,10 +49,16 @@ void game::drawGame(sf::RenderWindow& window) { };
 
 void game::drawStartMenu(sf::RenderWindow& window) {
 	scaled background(assets::texture::mainMenuBackground, {0, 0}, game::window::factors);
+
 	std::string current_mode = "Solo";
 	int focusID = -1;
 	int level = 0;
-	sf::Vector2f firstPlayerMenuPos(100, 200);
+
+	bool exit = false;
+	button backButton(scaled(assets::texture::button, {100, 100}, game::window::factors),
+			assets::texture::selectedButton, sf::Text("Back", window::standartFont));
+
+	sf::Vector2f firstPlayerMenuPos(200, 200);
 	std::vector<std::vector<std::any>> levels = {
 			std::vector<std::any> {
 				textinput (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y},
@@ -85,13 +93,16 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 					assets::texture::selectedButton,std::vector<std::string>{"Solo", "Duo"}),
 	};
 
-	while (window.isOpen()) {
+	while (window.isOpen()&&!exit) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) { window.close(); }
 			else if (event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonPressed) {
 				focusID = -1;
 				window.setMouseCursorVisible(true);
+				if (backButton.check(sf::Mouse::getPosition(window)) && event.type == sf::Event::MouseButtonPressed) {
+					exit = true;
+				}
 				for(int floor=0; floor < levels.size(); ++floor){
 					for(int i=0; i<levels[floor].size(); ++i){
 						auto& type = levels[floor][i].type();
@@ -124,6 +135,7 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 					}
 				}
 			}else if (event.type == sf::Event::KeyPressed){
+				backButton.update(0);
 				window.setMouseCursorVisible(false);
 				if(focusID<0){
 					focusID = 0;
@@ -136,7 +148,7 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 				if (event.key.code == sf::Keyboard::Escape) {
 					--level;
 					if(level<0){
-						//action = "Back";
+						exit = true;
 						break;
 					}
 					focusID = 0;
@@ -212,6 +224,10 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 
 		window.clear();
 		window.draw(background.getSprite());
+
+		window.draw(backButton.getSprite());
+		window.draw(backButton.getText());
+
 		for(int floor=0; floor < levels.size(); ++floor){
 			for(int i=0; i < levels[floor].size(); ++i){
 				auto& type = levels[floor][i].type();
