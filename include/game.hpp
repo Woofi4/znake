@@ -12,13 +12,14 @@
 
 namespace game {
 	namespace properties {
-		const unsigned speed = 0;
-		const bool reverseControl = false;
-		const bool has2p = false;
-		const bool hasBot = false;
+		extern unsigned speed;
+		extern bool reverseControl;
+		extern bool has2p;
+		extern bool hasBot;
 		extern int roundsCount;
 		extern std::string p2name;
 		extern std::string p1name;
+		extern std::string map;
 	};
 
 	namespace window {

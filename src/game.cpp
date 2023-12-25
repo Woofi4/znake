@@ -12,7 +12,7 @@ namespace game::window {
 	bool fullscreen;
 	sf::Vector2f size;
 	sf::Vector2f factors;
-	const int defaultFontSize = 30;
+	const int defaultFontSize = 60;
 	const sf::Font& textinputFont = assets::font::opensans;
 	const sf::Font& standartFont = assets::font::bebas;
 }
@@ -29,6 +29,7 @@ namespace game::properties {
 	int roundsCount;
 	std::string p2name;
 	std::string p1name;
+	std::string map;
 };
 
 
@@ -59,6 +60,7 @@ bool game::load() {
 	game::properties::roundsCount = 0;
 	game::properties::p2name = "P2";
 	game::properties::p1name = "P1";
+	game::properties::map = "labyrinth";
 	return true;
 }
 
@@ -77,7 +79,7 @@ void game::drawGame(sf::RenderWindow& window) {
 	sf::Text pause("Paused", assets::font::bebas, 80);
 
 
-	drawable_gamemap map(assets::map::box, {window::size.x, window::size.y}, game::properties::has2p, game::properties::hasBot);
+	drawable_gamemap map(game::properties::map == "box" ? assets::map::box : properties::map == "tunnel" ? assets::map::tunnel : assets::map::labyrinth, {window::size.x, window::size.y}, game::properties::has2p, game::properties::hasBot);
 	map.setScore1p(score1p_value);
 	map.setScore2p(score2p_value);
 	drawable_snake& snake = map.getSnake();
@@ -196,63 +198,56 @@ void game::drawGame(sf::RenderWindow& window) {
 };
 
 void game::drawStartMenu(sf::RenderWindow& window) {
-	scaled background(assets::texture::mainMenuBackground, {0, 0}, game::window::factors);
+	scaled background(assets::texture::startMenuBackground, {0, 0}, game::window::factors);
 
 	std::string current_mode = "Solo";
 	int focusID = -1;
 	int level = 0;
 
 	bool exit = false;
-	button backButton(scaled(assets::texture::button, {100, 100}, game::window::factors),
-					  assets::texture::selectedButton, sf::Text("Back", window::standartFont));
+	button backButton(scaled(assets::texture::back, {15, 15}, game::window::factors),
+					  assets::texture::back_selected, sf::Text("", window::standartFont));
 
-	sf::Vector2f firstPlayerMenuPos(200, 200);
+	sf::Vector2f firstPlayerMenuPos(40, 110);
 	std::vector<std::vector<std::any>> levels = {
 			std::vector<std::any> {
-					textinput (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y},
-									  game::window::factors),	assets::texture::selectedButton),
-					option (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+100}, game::window::factors),
-							assets::texture::selectedButton,std::vector<std::string>{"green", "red", "blue"}),
+					textinput (scaled(assets::texture::textInput, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+150},
+									  game::window::factors),	assets::texture::textInput_selected),
+					option (scaled(assets::texture::horizontal_option, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+300}, game::window::factors),
+							assets::texture::horizontal_option_selected,std::vector<std::string>{"green", "red", "blue"}),
 			},
 			std::vector<std::any> {
-					option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y-100}, game::window::factors),
-							assets::texture::selectedButton,std::vector<std::string>{"Solo", "Duo"}),
+					option (scaled(assets::texture::horizontal_option, {firstPlayerMenuPos.x+800, firstPlayerMenuPos.y}, game::window::factors),
+							assets::texture::horizontal_option_selected,std::vector<std::string>{"Solo", "Duo"}),
 			},
 			std::vector<std::any> {
-					option (scaled(assets::texture::button, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+300}, game::window::factors),
-							assets::texture::selectedButton,std::vector<std::string>{"0", "1"}),
-					option (scaled(assets::texture::button, {firstPlayerMenuPos.x+300, firstPlayerMenuPos.y+300}, game::window::factors),
-							assets::texture::selectedButton,std::vector<std::string>{"box", "commingsoon"}),
-					option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y+300}, game::window::factors),
-							assets::texture::selectedButton,std::vector<std::string>{"1", "2", "3", "4", "5", "6"}),
+					option (scaled(assets::texture::vertical_option, {firstPlayerMenuPos.x, firstPlayerMenuPos.y+520}, game::window::factors),
+							assets::texture::vertical_option_selected,std::vector<std::string>{"0", "1"}),
+					option (scaled(assets::texture::vertical_option, {firstPlayerMenuPos.x+400, firstPlayerMenuPos.y+520}, game::window::factors),
+							assets::texture::vertical_option_selected,std::vector<std::string>{"box", "tunnel", "labyrinth"}),
+					option (scaled(assets::texture::vertical_option, {firstPlayerMenuPos.x+800, firstPlayerMenuPos.y+520}, game::window::factors),
+							assets::texture::vertical_option_selected,std::vector<std::string>{"1", "2", "3", "4", "5", "6"}),
 			},
 			std::vector<std::any> {
-					button (scaled(assets::texture::button, {firstPlayerMenuPos.x+200, firstPlayerMenuPos.y+150}, game::window::factors),
-							assets::texture::selectedButton, sf::Text("START", window::standartFont))
+					button (scaled(assets::texture::startbutton, {440, 15}, game::window::factors),
+							assets::texture::startselectedButton, sf::Text("START", window::standartFont))
 			}
 	};
 
 	std::vector<std::any> SPOption = {
-			option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y-100}, game::window::factors),
-					assets::texture::selectedButton,std::vector<std::string>{"Duo", "Solo"}),
-			textinput (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y},
-							  game::window::factors),	assets::texture::selectedButton),
-			option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y+100}, game::window::factors),
-					assets::texture::selectedButton,std::vector<std::string>{"green", "red", "blue"}),
+			option (scaled(assets::texture::horizontal_option, {firstPlayerMenuPos.x+800, firstPlayerMenuPos.y}, game::window::factors),
+					assets::texture::horizontal_option_selected,std::vector<std::string>{"Duo", "Solo"}),
+			textinput (scaled(assets::texture::textInput, {firstPlayerMenuPos.x+800, firstPlayerMenuPos.y+150},
+							  game::window::factors),	assets::texture::textInput_selected),
+			option (scaled(assets::texture::horizontal_option, {firstPlayerMenuPos.x+800, firstPlayerMenuPos.y+300}, game::window::factors),
+					assets::texture::horizontal_option_selected,std::vector<std::string>{"green", "red", "blue"}),
 	};
 	std::vector<std::any> SPAdd = {
-			option (scaled(assets::texture::button, {firstPlayerMenuPos.x+600, firstPlayerMenuPos.y-100}, game::window::factors),
-					assets::texture::selectedButton,std::vector<std::string>{"Solo", "Duo"}),
+			option (scaled(assets::texture::horizontal_option, {firstPlayerMenuPos.x+800, firstPlayerMenuPos.y}, game::window::factors),
+					assets::texture::horizontal_option_selected,std::vector<std::string>{"Solo", "Duo"}),
 	};
 
 	while (window.isOpen()&&!exit) {
-		if(level>=levels.size()){
-			game::properties::has2p = (std::any_cast<option&>(levels[1][0]).getValue()=="Duo")?true:false;
-			game::properties::hasBot = (std::any_cast<option&>(levels[2][0]).getValue()=="1")?true:false;
-			game::properties::roundsCount = stoi(std::any_cast<option&>(levels[2][2]).getValue());
-
-			drawGame(window);
-		}
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) { window.close(); }
@@ -276,6 +271,11 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 										game::properties::has2p = (std::any_cast<option&>(levels[1][0]).getValue()=="Duo")?true:false;
 										game::properties::hasBot = (std::any_cast<option&>(levels[2][0]).getValue()=="1")?true:false;
 										game::properties::roundsCount = stoi(std::any_cast<option&>(levels[2][2]).getValue());
+										game::properties::map = std::any_cast<option&>(levels[2][1]).getValue();
+										game::properties::p1name = std::any_cast<textinput&>(levels[0][0]).getValue();
+										if(game::properties::has2p){
+											game::properties::p2name = std::any_cast<textinput&>(levels[1][1]).getValue();
+										}
 
 										drawGame(window);
 									}
@@ -324,6 +324,20 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 				if (event.key.code == sf::Keyboard::Enter) {
 					level++;
 					focusID = 0;
+					if(level>=levels.size()){
+						game::properties::has2p = (std::any_cast<option&>(levels[1][0]).getValue()=="Duo")?true:false;
+						game::properties::hasBot = (std::any_cast<option&>(levels[2][0]).getValue()=="1")?true:false;
+						game::properties::roundsCount = stoi(std::any_cast<option&>(levels[2][2]).getValue());
+						game::properties::map = std::any_cast<option&>(levels[2][1]).getValue();
+						game::properties::p1name = std::any_cast<textinput&>(levels[0][0]).getValue();
+						if(game::properties::has2p){
+							game::properties::p2name = std::any_cast<textinput&>(levels[1][1]).getValue();
+						}
+
+						drawGame(window);
+						exit = true;
+						break;
+					}
 				}
 				if (event.TextEntered&&focusID>=0) {
 					auto& type = levels[level][focusID].type();
@@ -414,6 +428,19 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 			}
 		}
 
+		if(std::any_cast<option&>(levels[2][1]).getValue()=="box"){
+			scaled box(assets::texture::box_prev, {390, 200}, game::window::factors);
+			window.draw(box.getSprite());
+		}
+		if(std::any_cast<option&>(levels[2][1]).getValue()=="tunnel"){
+			scaled box(assets::texture::tunnel_prev, {390, 200}, game::window::factors);
+			window.draw(box.getSprite());
+		}
+		if(std::any_cast<option&>(levels[2][1]).getValue()=="labyrinth"){
+			scaled box(assets::texture::labyrinth_prev, {390, 200}, game::window::factors);
+			window.draw(box.getSprite());
+		}
+
 		window.display();
 	}
 };
@@ -421,13 +448,21 @@ void game::drawStartMenu(sf::RenderWindow& window) {
 void game::drawMenu(sf::RenderWindow& window) {
 	scaled background(assets::texture::mainMenuBackground, {0, 0}, game::window::factors);
 
+	std::vector<sf::Text> mainMenuText = {
+			sf::Text("Znake", assets::font::bebas)
+	};
+
+	mainMenuText[0].setPosition(350*window::factors.x, 50*window::factors.y);
+	mainMenuText[0].setCharacterSize(window::defaultFontSize*2*window::factors.x);
+	mainMenuText[0].setFillColor(sf::Color(255,0,0));
+
 	sf::Vector2f mainMenuPos(100, 200); //menu block position
 	std::vector<button> mainMenuButtons = {
 			button (scaled(assets::texture::button, {mainMenuPos.x, mainMenuPos.y}, game::window::factors),
 					assets::texture::selectedButton, sf::Text("Play", game::window::standartFont)),
-			button (scaled(assets::texture::button, {mainMenuPos.x, mainMenuPos.y+100}, game::window::factors),
-					assets::texture::selectedButton, sf::Text("Settings", window::standartFont)),
 			button (scaled(assets::texture::button, {mainMenuPos.x, mainMenuPos.y+200}, game::window::factors),
+					assets::texture::selectedButton, sf::Text("Settings", window::standartFont)),
+			button (scaled(assets::texture::button, {mainMenuPos.x, mainMenuPos.y+400}, game::window::factors),
 					assets::texture::selectedButton, sf::Text("Exit", window::standartFont)),
 	};
 
@@ -489,6 +524,7 @@ void game::drawMenu(sf::RenderWindow& window) {
 				break;
 		}
 		window.clear();
+		window.draw(mainMenuText[0]);
 		window.draw(background.getSprite());
 		for(int i=0;i<mainMenuButtons.size();++i){
 			window.draw(mainMenuButtons[i].getSprite());
@@ -500,24 +536,24 @@ void game::drawMenu(sf::RenderWindow& window) {
 };
 
 void game::drawSettings(sf::RenderWindow& window) {
-	scaled background(assets::texture::mainMenuBackground, {0, 0}, game::window::factors);
+	scaled background(assets::texture::settingsBackground, {0, 0}, game::window::factors);
 
-	sf::Vector2f settingsMenuPos(100, 200); //setings block position
-	auto  a = sf::VideoMode::getFullscreenModes();
-	std::vector<std::string> resolutions = {"800x600", "1024x768", "1200x800", "1920x1080", "2560x1440", "3200x1800", "3840x2160"};
+	sf::Vector2f settingsMenuPos(650, 100); //setings block position
+
+	std::vector<std::string> resolutions = {"1200x800", "1600x1200", "1920x1080"};
 	std::vector<option> settingsOptions = {
-			option (scaled(assets::texture::button, {settingsMenuPos.x, settingsMenuPos.y}, game::window::factors), assets::texture::selectedButton,
+			option (scaled(assets::texture::horizontal_option, {settingsMenuPos.x, settingsMenuPos.y}, game::window::factors), assets::texture::horizontal_option_selected,
 					resolutions),
-			option (scaled(assets::texture::button, {settingsMenuPos.x, settingsMenuPos.y+100}, game::window::factors), assets::texture::selectedButton,
+			option (scaled(assets::texture::horizontal_option, {settingsMenuPos.x, settingsMenuPos.y+200}, game::window::factors), assets::texture::horizontal_option_selected,
 					std::vector<std::string>{"fullscreen", "window"}),
-			option (scaled(assets::texture::button, {settingsMenuPos.x, settingsMenuPos.y+200}, game::window::factors), assets::texture::selectedButton,
-					std::vector<std::string>{"arrows", "WASD"})
+			option (scaled(assets::texture::horizontal_option, {settingsMenuPos.x, settingsMenuPos.y+400}, game::window::factors), assets::texture::horizontal_option_selected,
+					std::vector<std::string>{"Arrows", "WASD"})
 	};
 
 	std::vector<button> settingsButtons = {
-			button (scaled(assets::texture::button, {settingsMenuPos.x, settingsMenuPos.y+400}, game::window::factors),
+			button (scaled(assets::texture::button, {settingsMenuPos.x-500, settingsMenuPos.y+550}, game::window::factors),
 					assets::texture::selectedButton, sf::Text("Back", window::standartFont)),
-			button (scaled(assets::texture::button, {settingsMenuPos.x+300, settingsMenuPos.y+400}, game::window::factors),
+			button (scaled(assets::texture::button, {settingsMenuPos.x, settingsMenuPos.y+550}, game::window::factors),
 					assets::texture::selectedButton, sf::Text("Save", window::standartFont))
 	};
 
@@ -606,9 +642,7 @@ void game::drawSettings(sf::RenderWindow& window) {
 
 		switch (pressed-settingsOptions.size()) {
 			case 1:
-				for(int i=0; i < settingsOptions.size(); ++i){
-					std::cout<<settingsOptions[i].getValue()<<std::endl;
-				}
+				game::properties::reverseControl = settingsOptions[2].getValue()=="Arrows"?true:false;
 				pressed = -1;
 				break;
 		}
