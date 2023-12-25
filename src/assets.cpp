@@ -9,10 +9,8 @@ namespace assets::font {
 };
 
 namespace assets::texture {
-	sf::Texture background;
-	sf::Texture start_button;
-	sf::Texture start_button_selected;
 	sf::Texture snake_skin;
+	sf::Texture snake_skin_red;
 	sf::Texture wall;
 	sf::Texture mainMenuBackground;
 	sf::Texture button;
@@ -61,13 +59,11 @@ bool assets::load() {
 	if (!texture::startbutton.loadFromFile("data/img/startbutton.png")) { return false; }
 	if (!texture::startselectedButton.loadFromFile("data/img/startselectedButton.png")) { return false; }
 	if (!texture::settingsBackground.loadFromFile("data/img/settings_background.png")) { return false; }
-	if (!texture::startMenuBackground.loadFromFile("data/img/start_menu_background.png")) { return false; }
+	if (!texture::startMenuBackground.loadFromFile("data/img/start_menu_background.jpg")) { return false; }
 
 	if (!font::arcade.loadFromFile("data/fonts/arcadeclassic.ttf")) { return false; }
-	if (!texture::background.loadFromFile("data/textures/background.png")) { return false; }
-	if (!texture::start_button.loadFromFile("data/textures/start_button.png")) { return false; }
-	if (!texture::start_button_selected.loadFromFile("data/textures/start_button_selected.png")) { return false; }
 	if (!texture::snake_skin.loadFromFile("data/textures/snake_skin.png")) { return false; }
+	if (!texture::snake_skin_red.loadFromFile("data/textures/snake_skin_red.png")) { return false; }
 	if (!texture::wall.loadFromFile("data/textures/wall.png")) { return false; }
 	if (!texture::mainMenuBackground.loadFromFile("data/img/main_menu_background.png")) { return false; }
 	if (!texture::button.loadFromFile("data/img/button.png")) { return false; }

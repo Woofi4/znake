@@ -6,7 +6,7 @@ drawable_gamemap::drawable_gamemap(const gamemap& mapObject, const std::pair<uns
 	_position({(windowSize.first - _size.first * snake::blockSize) / 2, (windowSize.second - _size.second * snake::blockSize) / 2}),
 	_blockSize(snake::blockSize),
 	_snake(drawable_block(_position.x + _spawn1p.first * snake::blockSize, _position.y + _spawn1p.second * snake::blockSize, snake::blockSize, assets::texture::snake_skin)),
-	_bot(drawable_block(_position.x + _spawn2p.first * snake::blockSize, _position.y + _spawn2p.second * snake::blockSize, snake::blockSize, assets::texture::snake_skin)),
+	_bot(drawable_block(_position.x + _spawn2p.first * snake::blockSize, _position.y + _spawn2p.second * snake::blockSize, snake::blockSize, assets::texture::snake_skin_red)),
 	_mapShape({_size.first * snake::blockSize, _size.second * snake::blockSize}),
 	_wallShapes(),
 	_common(),
@@ -139,7 +139,34 @@ void drawable_gamemap::update() {
 
 	// Bot logic
 	if (_has2p && _hasBot) {
-		//_bot.move();
+		std::string botdir = "WEST";
+
+		bool flag = true;
+		for (const drawable_block& block : _wallShapes) {
+			if ((_bot.getHeadX() + _bot.getDirection().first * snake::blockSize) == block.getX() && (_bot.getHeadY() + _bot.getDirection().second * snake::blockSize) == block.getY()) {
+				if (_bot.getHeadX() == block.getX() && (_bot.getHeadY() + snake::blockSize) == block.getY()) {
+					botdir = "EAST";
+				}
+				else if (_bot.getHeadX() == block.getX() && (_bot.getHeadY() - snake::blockSize) == block.getY()) {
+					botdir = "WEST";
+				}
+				else if ((_bot.getHeadX() + snake::blockSize) == block.getX() && _bot.getHeadY() == block.getY()) {
+					botdir = "NORTH";
+				}
+				else if ((_bot.getHeadX() - snake::blockSize) == block.getX() && _bot.getHeadY() == block.getY()) {
+					botdir = "SOUTH";
+				}
+				
+				flag = false;
+				break;
+			}
+		}
+		// if (flag) {
+		// 	int r = rand() % 4;
+		// 	botdir = r == 0 ? "EAST" : r == 1 ? "WEST" : r == 2 ? "NORTH" : "SOUTH";
+		// }
+
+		_bot.move(botdir);
 	}
 }
 

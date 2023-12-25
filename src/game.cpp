@@ -56,7 +56,7 @@ bool game::load() {
 	game::properties::speed = 0;
 	game::properties::reverseControl = false;
 	game::properties::has2p = false;
-	game::properties::hasBot = true;
+	game::properties::hasBot = false;
 	game::properties::roundsCount = 0;
 	game::properties::p2name = "P2";
 	game::properties::p1name = "P1";
